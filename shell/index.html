@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"><link href="../images/favicon.ico" rel="shortcut icon">
+
+  
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>pwaos shell</title>
+  <meta name="description" content="Terminal front-end component written in JavaScript that works in the pwaos.">
+
+  <!-- Social media cards start -->
+  <meta name="twitter:card" content="summary">
+  
+  <meta property="og:url" content="http://www.pwaos.net/shell">
+  <meta property="og:title" content="pwaos shell">
+  <meta property="og:description" content="Terminal front-end component written in JavaScript that works in the pwaos.">
+  <!-- Social media cards end -->
+
+  <link rel="shortcut icon" type="image/x-icon" href="../images/favicon.ico">
+  <link rel="stylesheet" href="bootstrap.min.css">
+  <link href="fonts.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="main.css">
+  <link rel="canonical" href="http://pwaos.net/">
+  <script src="../js/jquery-3.1.1.slim.min.js"></script>
+  <link rel="stylesheet" href="fontawesome.css">
+  <link rel="stylesheet" href="index.css">
+  <style>
+    html, body {
+      height: 100%;
+    }
+    body {
+      background-color: #000;
+    }
+  </style>
+</head>
+
+<body class="demo">
+  <div class="inner">
+      <div dir="ltr" class="terminal xterm">
+          <div class="xterm-viewport" style="background-color: rgb(45, 46, 44);">
+              <div class="xterm-scroll-area" style="height: 504px;"></div>
+          </div>
+          <div class="xterm-screen" style="width: 100%; height: 100%;">
+              <div class="xterm-helpers">
+                  <textarea class="xterm-helper-textarea" aria-label="Terminal input" aria-multiline="false" autocorrect="off" autocapitalize="none" spellcheck="false" tabindex="0" style="left: 18px; top: 414px; width: 9px; height: 18px; line-height: 18px; z-index: -5;"></textarea>
+                  <span class="xterm-char-measure-element" aria-hidden="true" style="white-space: pre; font-kerning: none; font-family: &quot;Cascadia Code&quot;, Menlo, monospace; font-size: 15px;">WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW</span>
+                  <div class="composition-view"></div>
+              </div>
+              <canvas class="xterm-link-layer" style="z-index: 2; width: 720px; height: 432px;" width="720" height="432"></canvas>
+              <canvas style="width: 720px; height: 432px;" width="720" height="432"></canvas>
+          </div>
+      </div>
+  </div>
+
+<link rel="stylesheet" href="xterm.css">
+<style>
+.xterm-viewport.xterm-viewport {
+    scrollbar-width: thin;
+}
+.xterm-viewport::-webkit-scrollbar {
+    width: 10px;
+}
+.xterm-viewport::-webkit-scrollbar-track {
+    opacity: 0;
+}
+.xterm-viewport::-webkit-scrollbar-thumb {
+    min-height: 20px;
+    background-color: #ffffff20;
+}
+</style>
+<script src="xterm.js"></script>
+<script src="xterm-addon-fit.js"></script>
+<script src="xterm-addon-webgl.js"></script>
+<script src="../pwaos.js"></script>
+<script src="terminal.js"></script>
+
+</body></html>
