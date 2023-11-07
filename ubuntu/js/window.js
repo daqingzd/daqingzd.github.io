@@ -152,6 +152,43 @@ function window_create_special(name,url,title,icon,icon_grayscale="",icon_bright
     showNotification(title,"\""+title+"\" is ready","",2000);
 }
 
+function window_minimize_pwa(w){
+    pwaos_.windowManager.isMinimized(w).then(function(value) {
+        if (value.ret)
+            pwaos_.windowManager.restore(w);
+        else
+            pwaos_.windowManager.minimize(w);
+    });
+}
+
+function window_delete_pwa(w){
+    document.getElementById(w+"-dock").remove();
+    changePanelActiveAppIcon('icons/null.svg','');
+}
+
+function window_create_pwa(url,title,icon,icon_grayscale="",icon_brightness=1){
+    pwaos_.appManager.launchAppWithType(pwaos.mojom.AppType.kNativeApp, url).then(function(value) {
+        var name = value.appId;
+        document.getElementById(name+"-dock").innerHTML="<div class=\"dock-app-active\"></div>\
+            <img class=\"dock-app\" onclick=\"window_minimize_pwa('"+name+"');\" draggable=\"false\" src=\""+icon+"\"/>";
+        changePanelActiveAppIcon(icon_grayscale,title,icon_brightness);
+        showNotification(title,"\""+title+"\" is ready","",2000);
+    });
+    hideAppMenu();
+}
+
+function window_attach_pwa(w) {
+    if (document.getElementById(w+'-dock') == null) {
+        var icon = '../images/pwaos_logo_48.png';
+        document.getElementById("dock").innerHTML+="<div id=\""+w+"-dock\" class=\"dock-app-container\">\
+            <div class=\"dock-app-active\"></div>\
+            <img class=\"dock-app\" onclick=\"window_minimize_pwa('"+w+"');\" draggable=\"false\" src=\""+icon+"\"/>\
+        </div>";
+        //changePanelActiveAppIcon(icon_grayscale,title,icon_brightness);
+        //showNotification(title,"\""+title+"\" is ready","",2000);
+    }
+}
+
 function window_delete(w){
     document.getElementById(w).remove();
     document.getElementById(w+"-dock").remove();

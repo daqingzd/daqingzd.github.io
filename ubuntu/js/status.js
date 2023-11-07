@@ -21,7 +21,11 @@ function openSettings(){
 }
 
 openShutdown = ()=>{
-    parent.showDialog("Shutdown Computer","Do you want to shutdown your computer?","Cancel","Shutdown","","location.href='https://github.com/malisipi/ubuntu-tour'")
+    parent.showDialog("Shutdown Computer","Do you want to shutdown your computer?","Cancel","Shutdown","",
+            "pwaos_.appManager.getCurrentAppID().then(function(value) { \
+                curr_app_id = value.appId; \
+                pwaos_.appManager.closeApp(curr_app_id); \
+             });");
 }
 
 lockSession=()=>{

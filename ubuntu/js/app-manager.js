@@ -60,9 +60,10 @@ app_list = [
         "icon":"icons/Suru/Suru/256x256/apps/system-settings.png"
     },
     {
+        "pwa":true,
         "code_name":"gnome-terminal",
         "name":"Terminal",
-        "location":"apps/terminal/index.html",
+        "location":"https://www.pwaos.net/shell/",
         "icon_48":"icons/Suru/Suru/48x48/apps/terminal-app.png",
         "dark_icon":"icons/Suru/Suru/scalable/apps/terminal-app-symbolic.svg",
         "dark_icon_brightness":2,
@@ -98,6 +99,7 @@ app_list = [
         "icon":"icons/Suru/Suru/256x256/apps/libreoffice-calc.png"
     },
     {
+        "pwa":true,
         "code_name":"wine mspaint.exe",
         "name":"Paint - WineHQ",
         "location":"https://paint.js.org",
@@ -113,6 +115,7 @@ app_list = [
         "icon_48":"icons/Suru/Suru/48x48/apps/wine.png"
     },
     {
+        "pwa":true,
         "code_name":"code",
         "name":"Visual Studio Code",
         "location":"https://vscode.dev",
@@ -145,7 +148,9 @@ start_app = (code_name,arg="") => {
     app_list.forEach(__app => {if(__app.code_name==code_name){app=__app;}});
     if(arg!="") arg="?"+arg;
     if(app!=""){
-        if(app.special){
+        if (app.pwa) {
+            window_create_pwa(app.location+arg,app.name,app.icon_48,app.dark_icon,app.dark_icon_brightness);
+        } else if (app.special) {
             window_create_special(createRandomWindowID(),app.location+arg,app.name,app.icon_48,app.dark_icon,app.dark_icon_brightness);
         } else {
             window_create(createRandomWindowID(),app.location+arg,app.name,app.icon_48,app.dark_icon,app.dark_icon_brightness);
@@ -162,3 +167,10 @@ check_app = (code_name) => {
         return false;
     }
 }
+
+pwaos_.registerEvent('appManager', 'onAppDestoryed', (app_id) => {
+    window_delete_pwa(app_id);
+});
+pwaos_.registerEvent('appManager', 'onAppCreated', (app_id) => {
+    window_attach_pwa(app_id);
+});
