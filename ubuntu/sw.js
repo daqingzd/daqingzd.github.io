@@ -22,7 +22,7 @@ if (workbox) {
   // 设置缓存的前缀和后缀，一般用项目名作为前缀，版本号作为后缀
   workbox.core.setCacheNameDetails({
     prefix: 'vue-pwa',
-    suffix: 'v0.0.1'
+    suffix: 'v0.2.a',
   })
   // 配置service work的更新激活策略
   workbox.core.skipWaiting() // 强制等待中 Service Worker 被激活
@@ -33,7 +33,7 @@ if (workbox) {
   workbox.precaching.precacheAndRoute([
     {
       "url": "index.html",
-      "revision": "b331f695"
+      "revision": null,
     },
   ]);
 

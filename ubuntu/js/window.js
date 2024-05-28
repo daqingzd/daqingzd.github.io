@@ -167,7 +167,13 @@ function window_delete_pwa(w){
 }
 
 function window_create_pwa(url,title,icon,icon_grayscale="",icon_brightness=1){
-    pwaos_.appManager.launchAppWithType(pwaos.mojom.AppType.kNativeApp, url).then(function(value) {
+    let bounds = new pwaos.mojom.Rect({
+        x: 0,
+        y: 0,
+        width: 800,
+        height: 600,
+    });
+    pwaos_.appManager.launchApp(pwaos.mojom.AppType.kNativeApp, url, bounds, null).then(function(value) {
         var name = value.appId;
         document.getElementById(name+"-dock").innerHTML="<div class=\"dock-app-active\"></div>\
             <img class=\"dock-app\" onclick=\"window_minimize_pwa('"+name+"');\" draggable=\"false\" src=\""+icon+"\"/>";

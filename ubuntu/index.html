@@ -26,7 +26,24 @@
         <link rel="stylesheet" href="css/dialog.css">
         <script src="js/notify.js"></script>
         <link rel="stylesheet" href="css/notify.css">
-        <script src="../js/pwaos.js"></script>
+        <script>
+            window.requestService('pwaos.runtime').then(function(success) {
+                if (success) {
+                    pwaos_ = pwaos.runtime;
+                    pwaos_.registerEvent('appManager', 'onAppDestoryed', (app_id) => {
+                        window_delete_pwa(app_id);
+                    });
+                    pwaos_.registerEvent('appManager', 'onAppCreated', (app_id) => {
+                        window_attach_pwa(app_id);
+                    });
+                }
+                console.log("pwaos version is " + pwaos_.kVersion);
+                if (pwaos_.kVersion < 0.2)
+                    console.log("pwaos version is too low, please update your pwaos runtime!");
+            }).catch(function(err) {
+                console.log("Failed to requestService: " + err);
+            });;
+        </script>
         <script src="js/app-manager.js"></script>
         <script src="js/login.js"></script>
         <!-- PWA support -->

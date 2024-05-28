@@ -167,10 +167,3 @@ check_app = (code_name) => {
         return false;
     }
 }
-
-pwaos_.registerEvent('appManager', 'onAppDestoryed', (app_id) => {
-    window_delete_pwa(app_id);
-});
-pwaos_.registerEvent('appManager', 'onAppCreated', (app_id) => {
-    window_attach_pwa(app_id);
-});
