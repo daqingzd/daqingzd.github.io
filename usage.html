@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html class="no-js" lang="zxx">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Welcome | pwaOS</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+    <link href="css/css2.css" rel="stylesheet">
+    <link rel="stylesheet" href="icofont.min.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="highlight/styles/dark.min.css">
+    <style>
+      .btn {
+        background-color: DodgerBlue;
+        border: none;
+        color: white;
+        padding: 12px 30px;
+        cursor: pointer;
+        font-size: 20px;
+      }
+
+      /* 鼠标悬停时背景变暗 */
+      .btn:hover {
+        background-color: RoyalBlue;
+      }
+    </style>
+    <style>
+        .margin-hr {
+          margin: 0;
+          margin-bottom: .75rem;
+        }
+        .background-color-white {
+          background-color: white;
+        }
+        .border-0 {
+          border-width: 0
+        }
+        .rounded-t-xl {
+          border-top-left-radius: .75rem;
+          border-top-right-radius: .75rem
+        }
+        .text-white {
+          --tw-text-opacity: 1;
+          color: rgb(255 255 255/var(--tw-text-opacity))
+        }
+        .mr-1 {
+          margin-right: .25rem
+        }
+        .px-4 {
+          padding-left: 1rem;
+          padding-right: 1rem
+        }
+        .py-2 {
+          padding-top: .5rem;
+          padding-bottom: .5rem
+        }
+        .bg-neutral-600 {
+          --tw-bg-opacity: 1;
+          background-color: rgb(82 82 82/var(--tw-bg-opacity))
+        }
+        .bg-neutral-800 {
+          --tw-bg-opacity: 1;
+          background-color: rgb(38 38 38/var(--tw-bg-opacity))
+        }
+
+    </style>
+  </head>
+  <body class="bg-img body-bg">
+    <div class="preloader-wrap" style="display: none;">
+      <div class="preloader">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+    <div class="bg-img color-white main-container">
+      <div id="header" class="style-1">
+        <div class="container">
+          <nav class="navbar navbar-expand-lg">
+            <a class="navbar-brand" href="#">
+              <img src="images/pwaos_logo_180_68.png" alt="" width="120px" height="47px">
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="icofont icofont-navigation-menu"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                  <a class="nav-link nav-menu" href="index.html">HOME</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link nav-menu" href="demo.html">DEMO</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link nav-menu active" href="usage.html">USAGE</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link nav-menu" href="api/index.html">DOCS</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link nav-menu" href="about.html">ABOUT</a>
+                </li>
+                <!-- <li class="nav-item">
+                  <a class="nav-link nav-menu" href="contact.html">CONTACT</a>
+                </li> -->
+              </ul>
+            </div>
+          </nav>
+        </div>
+      </div>
+      <div id="main-content-about" class="xs-no-positioning fixed fixed-middle">
+        <div class="container">
+            pwaOS server latest releases:
+            <HR class='margin-hr background-color-white'/>
+            <p>
+                <A href="https://github.com/daqingzd/pwaos/releases/download/v0.1.a/pwaos-demo-stable_0.1.a.0-1_amd64.deb" download>
+                  <button class='btn'>Linux<BR/><i class="icofont-brand-linux">.deb</i></button>
+                </A>
+                <A href="https://github.com/daqingzd/pwaos/releases/download/v0.1.a/pwaos_demo.packed.7z" download>
+                  <button class='btn'>Windows<BR/><i class="icofont-brand-windows">.exe</i></button>
+                </A>
+                <button class='btn'>Android<BR/><i class="icofont-brand-android-robot"> .apk</i></button>
+            </p>
+            pwaOS runtime client developer SDK latest releases:
+            <HR class='margin-hr background-color-white'/>
+            <p>
+                <button class='btn'>Linux<BR/><i class="icofont-brand-linux"> .a</i></button>
+                <button class='btn'>Windows<BR/><i class="icofont-brand-windows"> .lib</i></button>
+                <button class='btn'>Android<BR/><i class="icofont-brand-android-robot"> .aar</i></button>
+            </p>
+            pwaOS native client app sample code:
+            <HR class='margin-hr background-color-white'/>
+            <p>
+                <button id="cppTab" class="border-0 rounded-t-xl text-white mr-1 px-4 py-2 bg-neutral-600" onclick="fetchExampleCode('examples/shell_app.cc')">c/c++</button>
+                <button style="display:none" id="jsTab" class="border-0 rounded-t-xl text-white mr-1 px-4 py-2 bg-neutral-600" onclick="fetchExampleCode('examples/shell.js')">javascript</button>
+                <button style="display:none" id="mojoTab" class="border-0 rounded-t-xl text-white mr-1 px-4 py-2 bg-neutral-600" onclick="fetchExampleCode('examples/pwaos.mojom')">mojo</button>
+                <pre><code class="language-cpp" id="example-code"></code></pre>
+            </p>
+        </div>
+      </div>
+    </div>
+    <script src="js/jquery-3.1.1.slim.min.js"></script>
+    <script src="highlight/highlight.min.js"></script>
+    <script>
+        const exampleTabs = [
+        {
+            ID: '#cppTab',
+            codeUrl : 'examples/shell_app.cc',
+            active : 'true',
+        },
+        {
+            ID: '#jsTab',
+            codeUrl : 'examples/shell.js',
+            active : 'false',
+        },
+        {
+            ID: '#mojoTab',
+            codeUrl : 'examples/pwaos.mojom',
+            active : 'false',
+        }];
+
+        function fetchExampleCode(code_url) {
+            const myHeaders = new Headers();
+            const myRequest = new Request(code_url, {
+                method: "GET",
+                headers: myHeaders,
+                mode: "cors",
+                cache: "no-store",
+            });
+
+            fetch(myRequest)
+                .then((response) => response.blob())
+                .then((myBlob) => {
+                    myBlob.text().then(function(txt) {
+                        console.log(txt);
+                        $('#example-code').html(txt);
+                        hljs.highlightAll();
+                    });
+                });
+
+            exampleTabs.forEach((elem) => {
+                if (elem.codeUrl == code_url) {
+                    $(elem.ID).addClass('bg-neutral-800');
+                    $(elem.ID).removeClass('bg-neutral-600');
+                } else {
+                    $(elem.ID).removeClass('bg-neutral-800');
+                    $(elem.ID).addClass('bg-neutral-600');
+                    console.log($(elem.ID));
+                }
+            });
+        }
+
+        fetchExampleCode('examples/shell_app.cc');
+    </script>
+  </body>
+</html>
