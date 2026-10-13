@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover"/>
+    <meta name="theme-color" content="#0f0f12"/>
+    <title>Library</title>
+    <link rel="stylesheet" href="styles.css"/>
+    <script src="i18n.js" defer<script></script>
+<style>
+
+:root {
+    --bg-primary: #0f0f12;
+    --bg-secondary: #1a1a1f;
+    --bg-tertiary: #242429;
+    --bg-hover: rgba(255, 255, 255, 0.04);
+    --text-primary: #fff;
+    --text-secondary: rgba(255, 255, 255, 0.7);
+    --text-tertiary: rgba(255, 255, 255, 0.5);
+    --border-subtle: rgba(255, 255, 255, 0.08);
+    --accent-primary: #ff6b35;
+    --radius-md: 10px;
+    --transition-base: 180ms ease;
+}
+:root[data-theme="light"] {
+    --bg-primary: #f5f5f7;
+    --bg-secondary: #fff;
+    --bg-tertiary: #ebebed;
+    --bg-hover: rgba(0, 0, 0, 0.04);
+    --text-primary: #1d1d1f;
+    --text-secondary: rgba(0, 0, 0, 0.6);
+    --text-tertiary: rgba(0, 0, 0, 0.4);
+    --border-subtle: rgba(0, 0, 0, 0.08);
+}
+:root { color-scheme: dark; }
+:root[data-theme="light"] { color-scheme: light; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+}
+.page-header {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background: var(--bg-primary);
+    border-bottom: 1px solid var(--border-subtle);
+}
+.page-header h1 { font-size: 18px; font-weight: 600; letter-spacing: -0.2px; }
+.page-actions { display: flex; gap: 8px; align-items: center; }
+.page-btn {
+    padding: 7px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background var(--transition-base), border-color var(--transition-base);
+}
+.page-btn:hover { background: var(--bg-hover); border-color: rgba(255, 255, 255, 0.18); }
+.page-btn.danger { color: #ff7a7a; border-color: rgba(255, 122, 122, 0.3); }
+.page-btn.danger:hover { background: rgba(255, 122, 122, 0.1); border-color: rgba(255, 122, 122, 0.55); }
+.count-badge {
+    display: inline-block;
+    min-width: 24px;
+    text-align: center;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 600;
+}
+.search-bar {
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border-subtle);
+    background: var(--bg-secondary);
+}
+.search-input {
+    width: 100%;
+    padding: 10px 14px 10px 38px;
+    border-radius: 999px;
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-primary) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff80' stroke-width='2'><circle cx='11' cy='11' r='8'/><line x1='21' y1='21' x2='16.65' y2='16.65'/</svg>") no-repeat 12px center;
+    background-size: 16px 16px;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-family: inherit;
+}
+:root[data-theme="light"] .search-input {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300000099' stroke-width='2'><circle cx='11' cy='11' r='8'/><line x1='21' y1='21' x2='16.65' y2='16.65'/</svg>");
+}
+.search-input:focus { outline: none; border-color: var(--accent-primary); }
+.library-tabs {
+    display: flex;
+    gap: 4px;
+    padding: 8px 12px 0;
+    background: var(--bg-primary);
+    border-bottom: 1px solid var(--border-subtle);
+}
+.library-tab {
+    flex: 1;
+    padding: 10px 16px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: color var(--transition-base), background var(--transition-base);
+    white-space: nowrap;
+}
+.library-tab:hover { color: var(--text-primary); background: var(--bg-hover); }
+.library-tab.active { color: var(--accent-primary); background: var(--bg-tertiary); }
+.library-tab svg { width: 16px; height: 16px; margin-right: 6px; vertical-align: middle; }
+.library-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 12px 32px;
+    display: none;
+}
+.library-content.active { display: block; }
+.folder-header, .day-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 8px 8px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-tertiary);
+}
+.folder-count, .day-count {
+    margin-left: auto;
+    font-size: 11px;
+    background: var(--bg-tertiary);
+    padding: 2px 8px;
+    border-radius: 999px;
+    color: var(--text-secondary);
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
+}
+/* Bookmarks tree menu: collapsible folder branches. .tree-toggle rows
+   toggle their .tree-children; deeper levels nest via padding-left so
+   the hierarchy reads like a file tree. */
+.tree-node { min-width: 0; }
+.tree-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: background var(--transition-base);
+    user-select: none;
+}
+.tree-toggle:hover { background: var(--bg-hover); }
+.tree-toggle:focus { background: var(--bg-hover); outline: none; }
+.tree-toggle:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: -2px; }
+.tree-caret {
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+    color: var(--text-tertiary);
+    transition: transform var(--transition-base);
+}
+.tree-toggle[aria-expanded="true"] .tree-caret { transform: rotate(90deg); }
+.tree-icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    color: var(--accent-primary);
+}
+.tree-name {
+    flex: 1;
+    min-width: 0;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-tertiary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.tree-children { padding-left: 18px; }
+.item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: background var(--transition-base);
+    border: 1px solid transparent;
+}
+.item:hover { background: var(--bg-hover); }
+.item:focus { background: var(--bg-hover); border-color: var(--accent-primary); outline: none; }
+.item .icon {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-tertiary);
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent-primary);
+}
+.item .icon.large { width: 36px; height: 36px; font-size: 18px; border-radius: 8px; }
+.item .info { flex: 1; min-width: 0; }
+.item .title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.item .url, .item .time {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 2px;
+}
+.item .meta {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    margin-top: 2px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.item .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+}
+.item .status.completed { background: rgba(76, 175, 80, 0.15); color: #81c784; }
+:root[data-theme="light"] .item .status.completed { background: rgba(76, 175, 80, 0.2); color: #2e7d32; }
+.item .actions {
+    display: flex;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity var(--transition-base);
+}
+.item:hover .actions, .item:focus-within .actions { opacity: 1; }
+.icon-btn {
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background var(--transition-base), color var(--transition-base);
+}
+.icon-btn:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+.icon-btn.danger:hover { color: #ff7a7a; }
+.empty-state {
+    padding: 60px 24px;
+    text-align: center;
+    color: var(--text-tertiary);
+}
+.empty-state .icon { font-size: 48px; margin-bottom: 12px; opacity: 0.5; }
+.empty-state .title { font-size: 16px; color: var(--text-secondary); margin-bottom: 6px; font-weight: 500; }
+.empty-state .hint { font-size: 13px; }
+@media (max-width: 600px) {
+    .page-header { padding: 12px 14px; }
+    .search-bar { padding: 10px 14px; }
+    .library-content { padding: 6px 8px 24px; }
+    .page-btn { padding: 6px 10px; font-size: 12px; }
+    .library-tab { padding: 8px 10px; font-size: 12px; }
+}
+</style>
+</head>
+<body>
+    <header class="page-header">
+        <h1 data-i18n="library">Library</h1>
+        <div class="page-actions">
+            <span class="count-badge" id="item-count">0</span>
+            <button class="page-btn danger" id="clear-all-btn" data-i18n="clearAll">Clear All</button>
+       </div>
+   </header>
+    <div class="search-bar">
+        <input type="search" id="search-input" class="search-input" data-i18n-placeholder="searchBookmarks" placeholder="Search bookmarks..." autocomplete="off">
+   </div>
+    <div class="library-tabs">
+        <button class="library-tab active" data-view="bookmarks">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+            <span data-i18n="bookmarks2">Bookmarks</span>
+       </button>
+        <button class="library-tab" data-view="history">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            <span data-i18n="history2">History</span>
+       </button>
+        <button class="library-tab" data-view="downloads">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+            <span data-i18n="downloads2">Downloads</span>
+       </button>
+   </div>
+    <main class="library-content active" id="bookmarks-content"></main>
+    <main class="library-content" id="history-content"></main>
+    <main class="library-content" id="downloads-content"></main>
+<script>
+
+(function() {
+    console.log(location.search);
+    function applyTheme(value) {
+        var v = value === "light" ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", v);
+        var m = document.querySelector('meta[name="theme-color"]');
+        if (m) m.setAttribute("content", v === "light" ? "#f5f5f7" : "#0f0f12");
+    }
+    window.addEventListener("message", function(e) {
+        if (location.origin !== "file://" && e.origin !== location.origin) return;
+        var d = e.data;
+        if (!d || typeof d !== "object") return;
+        if (d.type === "theme") applyTheme(d.theme);
+    });
+    (function() {
+        var p = new URLSearchParams(location.search);
+        var t = p.get("theme");
+        if (t) applyTheme(t);
+    })();
+
+    function t2(k, fb) {
+        if (window.i18n && typeof window.i18n.t === "function") return window.i18n.t(k);
+        return fb || k;
+    }
+    function esc(s) {
+        return String(s || "").replace(/[&<>"']/g, function(c) {
+            return {"&": "&", "<": "<", ">": ">", '"': '"', "'": "'"}[c];
+        });
+    }
+    function favChar(u) {
+        try {
+            var p = new URL(u);
+            if (p.protocol === "file:") return "F";
+            if (p.protocol === "newtab:") return "N";
+            return p.hostname[0] ? p.hostname[0].toUpperCase() : "B";
+        } catch (e) { return "B"; }
+    }
+    function fmtDate(ts) {
+        try { return new Date(ts).toLocaleString(); } catch (e) { return ""; }
+    }
+    function fmtSize(b) {
+        if (b == null || isNaN(b)) return t2("unknownSize", "Unknown size");
+        var u = ["B", "KB", "MB", "GB", "TB"];
+        var i = 0;
+        while (b >= 1024 && i < u.length - 1) { b /= 1024; i++; }
+        return b.toFixed(i === 0 ? 0 : 1) + " " + u[i];
+    }
+    function ext(filename) {
+        var m = String(filename || "").match(/\.([a-z0-9]+)(?:[?#].*)?$/i);
+        return m ? m[1].toUpperCase() : "FILE";
+    }
+    function fmtRel(ts) {
+        var d = Date.now() - ts;
+        var min = 60000, h = 3600000, day = 86400000;
+        if (d < min) return t2("justNow", "just now");
+        if (d < h) return Math.floor(d / min) + " " + t2("minutesAgo", "min ago");
+        if (d < day) return Math.floor(d / h) + " " + t2("hoursAgo", "hr ago");
+        if (d < 7 * day) return Math.floor(d / day) + " " + t2("daysAgo", "d ago");
+        var dt = new Date(ts);
+        return (dt.getMonth() + 1) + "/" + dt.getDate();
+    }
+    function dayLabel(ts) {
+        var n = new Date();
+        var today = new Date(n.getFullYear(), n.getMonth(), n.getDate()).getTime();
+        var yest = today - 86400000;
+        if (ts >= today) return t2("today", "Today");
+        if (ts >= yest) return t2("yesterday", "Yesterday");
+        var d = new Date(ts);
+        return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+    }
+
+    var BOOKMARKS_KEY = "ffBookmarks";
+    function loadBookmarks() {
+        try {
+            var a = JSON.parse(localStorage.getItem(BOOKMARKS_KEY) || "[]");
+            if (!Array.isArray(a)) a = [];
+            return a;
+        } catch (e) { return []; }
+    }
+    function saveBookmarks(a) {
+        try { localStorage.setItem(BOOKMARKS_KEY, JSON.stringify(a)); } catch (e) {}
+    }
+
+    function loadHistory() {
+        try {
+            var raw = localStorage.getItem("ffHistory");
+            if (!raw) return [];
+            var p = JSON.parse(raw);
+            if (Array.isArray(p) && p.length > 0 && typeof p[0] === "string") {
+                var m = p.map(function(u, i) { return { url: u, title: u, visitedAt: Date.now() - i * 60000 }; });
+                try { localStorage.setItem("ffHistory", JSON.stringify(m)); } catch (e) {}
+                return m;
+            }
+            if (!Array.isArray(p)) return [];
+            return p.filter(function(e) { return e && typeof e.url === "string"; });
+        } catch (e) { return []; }
+    }
+    function saveHistory(a) {
+        try {
+            localStorage.setItem("ffHistory", JSON.stringify(a));
+            localStorage.setItem("ffHistoryFlat", JSON.stringify(a.map(function(e) { return e.url; })));
+        } catch (e) {}
+    }
+
+    function loadDownloads() {
+        try {
+            var a = JSON.parse(localStorage.getItem("ffDownloads") || "[]");
+            if (!Array.isArray(a)) return [];
+            return a;
+        } catch (e) { return []; }
+    }
+    function saveDownloads(a) {
+        try { localStorage.setItem("ffDownloads", JSON.stringify(a)); } catch (e) {}
+    }
+
+    var _q = "";
+    var _currentView = "bookmarks";
+
+    function switchView(view) {
+        _currentView = view;
+        document.querySelectorAll(".library-tab").forEach(function(tab) {
+            tab.classList.toggle("active", tab.dataset.view === view);
+        });
+        document.querySelectorAll(".library-content").forEach(function(c) {
+            c.classList.toggle("active", c.id === view + "-content");
+        });
+        var searchInput = document.getElementById("search-input");
+        if (searchInput) searchInput.value = "";
+        _q = "";
+        render();
+    }
+
+    function render() {
+        var searchInput = document.getElementById("search-input");
+        if (searchInput) {
+            searchInput.placeholder = t2(
+                _currentView === "bookmarks" ? "searchBookmarks" :
+                _currentView === "history" ? "searchHistory" : "searchDownloads",
+                _currentView === "bookmarks" ? "Search bookmarks..." :
+                _currentView === "history" ? "Search history..." : "Search downloads..."
+            );
+        }
+
+        if (_currentView === "bookmarks") {
+            renderBookmarks();
+        } else if (_currentView === "history") {
+            renderHistory();
+        } else if (_currentView === "downloads") {
+            renderDownloads();
+        }
+    }
+
+    // Build a folder tree from the flat bookmark list. Folder names may
+    // nest with "/" ("Work/Design"): each path segment becomes a level,
+    // so "Work" contains "Design", which may contain deeper folders.
+    // Returns { name, items, children: {fullPath -> node} }.
+    function buildFolderTree(items) {
+        var root = { name: "", items: [], children: {} };
+        items.forEach(function(b) {
+            if (!b.folder) { root.items.push(b); return; }
+            var node = root, segs = b.folder.split("/"), cur = "";
+            for (var i = 0; i < segs.length; i++) {
+                cur = cur ? cur + "/" + segs[i] : segs[i];
+                if (!node.children[cur]) node.children[cur] = { name: segs[i], items: [], children: {} };
+                node = node.children[cur];
+            }
+            node.items.push(b);
+        });
+        return root;
+    }
+
+    // Total bookmarks under a tree node (its own + all descendants).
+    function treeCount(node) {
+        var c = node.items.length;
+        Object.keys(node.children).forEach(function(k) { c += treeCount(node.children[k]); });
+        return c;
+    }
+
+    // Render one folder node as a collapsible tree branch: toggle header
+    // (caret + folder icon + name + count), then its bookmarks and its
+    // subfolders (each nested one level deeper via .tree-children
+    // padding-left). Expanded by default; click toggles .collapsed.
+    function renderTreeFolder(node, path, all, ri) {
+        var html = '<div class="tree-node" data-folder="' + esc(path) + '">' +
+            '<div class="tree-toggle" tabindex="0" role="button" aria-expanded="true">' +
+            '<svg class="tree-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>' +
+            '<svg class="tree-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>' +
+            '<span class="tree-name">' + esc(node.name) + '</span>' +
+            '<span class="folder-count">' + treeCount(node) + '</span>' +
+            '</div>' +
+            '<div class="tree-children">';
+        html += node.items.map(ri).join("");
+        Object.keys(node.children).sort(function(a, b) { return a.localeCompare(b); }).forEach(function(p) {
+            html += renderTreeFolder(node.children[p], p, all, ri);
+        });
+        html += '</div></div>';
+        return html;
+    }
+
+    function renderBookmarks() {
+        var L = document.getElementById("bookmarks-content");
+        var all = loadBookmarks();
+        var q = _q.toLowerCase().trim();
+        var fil = q ? all.filter(function(b) {
+            return (b.title || "").toLowerCase().indexOf(q) >= 0 ||
+                   (b.url || "").toLowerCase().indexOf(q) >= 0 ||
+                   (b.folder || "").toLowerCase().indexOf(q) >= 0;
+        }) : all.slice();
+
+        document.getElementById("item-count").textContent = all.length;
+
+        if (fil.length === 0) {
+            if (q) {
+                L.innerHTML = '<div class="empty-state"><div class="icon">S</div><div class="title">' +
+                    esc(t2("noMatchFound", "No matches")) + '</div><div class="hint">' +
+                    esc(t2("noMatchHint", "Try a different keyword")) + '</div></div>';
+            } else {
+                L.innerHTML = '<div class="empty-state"><div class="icon">★</div><div class="title">' +
+                    esc(t2("noBookmarks", "No bookmarks yet")) + '</div><div class="hint">' +
+                    esc(t2("noBookmarksHint", "Click the star to save the current page")) + '</div></div>';
+            }
+            return;
+        }
+
+        var root = buildFolderTree(fil);
+
+        function ri(b) {
+            var title = esc(b.title || b.url || "");
+            var url = esc(b.url || "");
+            var fav = esc(favChar(b.url));
+            var idx = all.indexOf(b);
+            return '<div class="item" data-url="' + esc(b.url || "") + '" tabindex="0">' +
+                '<div class="icon">' + fav + '</div>' +
+                '<div class="info"><div class="title">' + title + '</div><div class="url">' + url + '</div></div>' +
+                '<div class="actions">' +
+                '<button class="icon-btn" data-action="open" data-idx="' + idx + '" title="' + esc(t2("open", "Open")) + '" aria-label="' + esc(t2("open", "Open")) + '">O</button>' +
+                '<button class="icon-btn danger" data-action="delete" data-idx="' + idx + '" title="' + esc(t2("delete", "Delete")) + '" aria-label="' + esc(t2("delete", "Delete")) + '">X</button>' +
+                '</div></div>';
+        }
+
+        var html = "";
+        if (root.items.length) html += root.items.map(ri).join("");
+        // Folder bookmarks render as a collapsible tree menu: one toggle
+        // row per folder, subfolders nested via .tree-children padding.
+        // The toggle click is delegated below (L re-renders on every
+        // render, so listeners must not stack).
+        Object.keys(root.children).sort(function(a, b) { return a.localeCompare(b); }).forEach(function(p) {
+            html += renderTreeFolder(root.children[p], p, all, ri);
+        });
+        L.innerHTML = html;
+    }
+
+    // Toggle a tree folder branch open/closed. aria-expanded stays the
+    // source of truth; .collapsed only hides the children.
+    function toggleTreeFolder(toggle) {
+        var node = toggle.closest(".tree-node");
+        if (!node) return;
+        var children = node.querySelector(":scope > .tree-children");
+        if (!children) return;
+        var expanded = toggle.getAttribute("aria-expanded") === "true";
+        toggle.setAttribute("aria-expanded", expanded ? "false" : "true");
+        children.style.display = expanded ? "none" : "";
+    }
+
+    function renderHistory() {
+        var L = document.getElementById("history-content");
+        var all = loadHistory();
+        var q = _q.toLowerCase().trim();
+        var fil = q ? all.filter(function(e) {
+            return (e.title || "").toLowerCase().indexOf(q) >= 0 ||
+                   (e.url || "").toLowerCase().indexOf(q) >= 0;
+        }) : all.slice();
+
+        document.getElementById("item-count").textContent = all.length;
+
+        if (fil.length === 0) {
+            if (q) {
+                L.innerHTML = '<div class="empty-state"><div class="icon">S</div><div class="title">' +
+                    esc(t2("noMatchFound", "No matches")) + '</div><div class="hint">' +
+                    esc(t2("noMatchHint", "Try a different keyword")) + '</div></div>';
+            } else {
+                L.innerHTML = '<div class="empty-state"><div class="icon">↺</div><div class="title">' +
+                    esc(t2("noHistory", "No history yet")) + '</div><div class="hint">' +
+                    esc(t2("noHistoryHint", "Pages you visit will appear here")) + '</div></div>';
+            }
+            return;
+        }
+
+        var groups = {};
+        fil.forEach(function(e) {
+            var lbl = dayLabel(e.visitedAt);
+            if (!groups[lbl]) groups[lbl] = [];
+            groups[lbl].push(e);
+        });
+
+        function ri(e) {
+            var title = esc(e.title || e.url || "");
+            var url = esc(e.url || "");
+            var fav = esc(favChar(e.url));
+            var idx = all.indexOf(e);
+            return '<div class="item" data-url="' + esc(e.url || "") + '" tabindex="0">' +
+                '<div class="icon">' + fav + '</div>' +
+                '<div class="info"><div class="title">' + title + '</div><div class="time">' + fmtRel(e.visitedAt) + '</div></div>' +
+                '<div class="actions">' +
+                '<button class="icon-btn" data-action="open" data-idx="' + idx + '" title="' + esc(t2("open", "Open")) + '" aria-label="' + esc(t2("open", "Open")) + '">O</button>' +
+                '<button class="icon-btn danger" data-action="delete" data-idx="' + idx + '" title="' + esc(t2("delete", "Delete")) + '" aria-label="' + esc(t2("delete", "Delete")) + '">X</button>' +
+                '</div></div>';
+        }
+
+        var html = "";
+        if (!q) {
+            html += '<div style="padding:8px 14px;text-align:right;">' +
+                '<button class="icon-btn danger" data-action="clear-history" style="opacity:1;padding:6px 12px;border:1px solid var(--border-subtle);border-radius:8px;background:transparent;color:var(--text-secondary);font-size:13px;cursor:pointer;">' +
+                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>' +
+                ' ' + esc(t2("clearHistory", "Clear History")) + '</button></div>';
+        }
+
+        Object.keys(groups).forEach(function(lbl) {
+            html += '<div class="day-header"><span>↺</span><span>' + esc(lbl) + '</span><span class="day-count">' + groups[lbl].length + '</span></div>';
+            html += groups[lbl].map(ri).join("");
+        });
+        L.innerHTML = html;
+    }
+
+    function renderDownloads() {
+        var L = document.getElementById("downloads-content");
+        var all = loadDownloads();
+        var q = _q.toLowerCase().trim();
+        var fil = q ? all.filter(function(d) {
+            return (d.filename || "").toLowerCase().indexOf(q) >= 0 ||
+                   (d.url || "").toLowerCase().indexOf(q) >= 0;
+        }) : all.slice();
+
+        document.getElementById("item-count").textContent = all.length;
+
+        if (fil.length === 0) {
+            if (q) {
+                L.innerHTML = '<div class="empty-state"><div class="icon">S</div><div class="title">' +
+                    esc(t2("noMatchFound", "No matches")) + '</div><div class="hint">' +
+                    esc(t2("noMatchHint", "Try a different keyword")) + '</div></div>';
+            } else {
+                L.innerHTML = '<div class="empty-state"><div class="icon">📥</div><div class="title">' +
+                    esc(t2("noDownloads", "No downloads yet")) + '</div><div class="hint">' +
+                    esc(t2("noDownloadsHint", "Files you download will appear here")) + '</div></div>';
+            }
+            return;
+        }
+
+        function ri(d) {
+            var name = esc(d.filename || d.url || "");
+            var status = d.completed ? t2("completed", "Completed") : t2("downloading", "Downloading");
+            var date = esc(fmtDate(d.timestamp));
+            var size = esc(fmtSize(d.size));
+            var iconChar = d.completed ? "✓" : "↓";
+            var idx = all.indexOf(d);
+            return '<div class="item" data-id="' + d.id + '" data-url="' + esc(d.url || "") + '" tabindex="0">' +
+                '<div class="icon large">' + iconChar + '</div>' +
+                '<div class="info"><div class="title">' + name + '</div>' +
+                '<div class="meta"><span class="status' + (d.completed ? " completed" : "") + '">' + status + '</span>' +
+                '<span>' + date + '</span><span>' + size + '</span><span>' + ext(d.filename) + '</span></div></div>' +
+                '<div class="actions">' +
+                '<button class="icon-btn" data-action="open" data-id="' + d.id + '" title="' + esc(t2("open", "Open")) + '" aria-label="' + esc(t2("open", "Open")) + '">O</button>' +
+                '<button class="icon-btn danger" data-action="delete" data-id="' + d.id + '" title="' + esc(t2("delete", "Delete")) + '" aria-label="' + esc(t2("delete", "Delete")) + '">X</button>' +
+                '</div></div>';
+        }
+
+        L.innerHTML = fil.map(ri).join("");
+    }
+
+    function delBM(i) {
+        var all = loadBookmarks();
+        var b = all[i];
+        if (!b) return;
+        if (!confirm(t2("deleteBookmarkConfirm", 'Delete bookmark "{title}"?').replace("{title}", b.title || b.url || ""))) return;
+        var n = (b.url || "").trim();
+        saveBookmarks(all.filter(function(x) { return (x.url || "").trim() !== n; }));
+        render();
+        try { parent.postMessage({ type: "bookmarks-changed" }, location.origin === "file://" ? "*" : location.origin); } catch (e) {}
+    }
+
+    function delHist(i) {
+        var all = loadHistory();
+        var e = all[i];
+        if (!e) return;
+        if (!confirm(t2("deleteHistoryConfirm", 'Delete history "{title}"?').replace("{title}", e.title || e.url || ""))) return;
+        var n = (e.url || "").trim();
+        var fil = all.filter(function(x) { return (x.url || "").trim() !== n; });
+        saveHistory(fil);
+        render();
+        try { parent.postMessage({ type: "history-changed" }, location.origin === "file://" ? "*" : location.origin); } catch (e) {}
+    }
+
+    function delDL(id) {
+        var all = loadDownloads();
+        var target = all.find(function(d) { return d.id === id; });
+        if (!target) return;
+        var fil = all.filter(function(d) { return d.id !== id; });
+        saveDownloads(fil);
+        render();
+        try { parent.postMessage({ type: "downloads-changed" }, location.origin === "file://" ? "*" : location.origin); } catch (e) {}
+    }
+
+    function openUrl(u, nT) {
+        try { parent.postMessage({ type: "navigate", url: u, newTab: nT !== false }, location.origin === "file://" ? "*" : location.origin); } catch (e) {}
+    }
+
+    function openDL(id) {
+        var all = loadDownloads();
+        var target = all.find(function(d) { return d.id === id; });
+        if (!target) return;
+        try { parent.postMessage({ type: "navigate", url: target.url, newTab: false }, location.origin === "file://" ? "*" : location.origin); } catch (e) {}
+    }
+
+    function clearAllBookmarks() {
+        var all = loadBookmarks();
+        if (!all.length) return;
+        if (!confirm(t2("clearAllBookmarksConfirm", "Delete ALL bookmarks? This cannot be undone."))) return;
+        saveBookmarks([]);
+        render();
+        try { parent.postMessage({ type: "bookmarks-changed" }, location.origin === "file://" ? "*" : location.origin); } catch (e) {}
+    }
+
+    function clearAllHistory() {
+        var all = loadHistory();
+        if (!all.length) return;
+        if (!confirm(t2("clearAllHistoryConfirm", "Clear all browsing history? This cannot be undone."))) return;
+        try {
+            localStorage.removeItem("ffHistory");
+            localStorage.removeItem("ffHistoryFlat");
+            localStorage.removeItem("ffRecent");
+        } catch (e) {}
+        render();
+        try { parent.postMessage({ type: "history-changed" }, location.origin === "file://" ? "*" : location.origin); } catch (e) {}
+    }
+
+    function clearAllDownloads() {
+        var all = loadDownloads();
+        if (!all.length) return;
+        if (!confirm(t2("clearAllDownloadsConfirm", "Clear all download history? This cannot be undone."))) return;
+        saveDownloads([]);
+        render();
+        try { parent.postMessage({ type: "downloads-changed" }, location.origin === "file://" ? "*" : location.origin); } catch (e) {}
+    }
+
+    // Event listeners
+    document.querySelectorAll(".library-tab").forEach(function(tab) {
+        tab.addEventListener("click", function() { switchView(tab.dataset.view); });
+    });
+
+    var searchInput = document.getElementById("search-input");
+    if (searchInput) {
+        searchInput.addEventListener("input", function(e) { _q = e.target.value; render(); });
+    }
+
+    var clearBtn = document.getElementById("clear-all-btn");
+    if (clearBtn) {
+        clearBtn.addEventListener("click", function() {
+            if (_currentView === "bookmarks") clearAllBookmarks();
+            else if (_currentView === "history") clearAllHistory();
+            else if (_currentView === "downloads") clearAllDownloads();
+        });
+    }
+
+    function handleListClick(e, listId) {
+        // Tree folder toggles: collapse/expand a folder branch. Handled
+        // before .item — .tree-toggle is a sibling of .tree-children,
+        // not inside an item, so item clicks are unaffected.
+        var tt = e.target.closest(".tree-toggle");
+        if (tt) { toggleTreeFolder(tt); return; }
+        var it = e.target.closest(".item");
+        if (!it) return;
+        var u = it.dataset.url;
+        var ab = e.target.closest("[data-action]");
+        if (ab) {
+            e.stopPropagation();
+            var ac = ab.dataset.action;
+            if (ac === "delete") {
+                var idx = parseInt(ab.dataset.idx, 10);
+                var id = Number(ab.dataset.id);
+                if (_currentView === "bookmarks") delBM(idx);
+                else if (_currentView === "history") delHist(idx);
+                else if (_currentView === "downloads") delDL(id);
+            } else if (ac === "open") {
+                if (_currentView === "downloads") openDL(Number(ab.dataset.id));
+                else openUrl(u, true);
+            } else if (ac === "clear-history") {
+                clearAllHistory();
+            }
+            return;
+        }
+        if (_currentView === "downloads") {
+            var openBtn = it.querySelector('[data-action="open"]');
+            if (openBtn) openBtn.click();
+        } else {
+            openUrl(u, true);
+        }
+    }
+
+    document.getElementById("bookmarks-content")?.addEventListener("click", function(e) { handleListClick(e, "bookmarks-content"); });
+    document.getElementById("history-content")?.addEventListener("click", function(e) { handleListClick(e, "history-content"); });
+    document.getElementById("downloads-content")?.addEventListener("click", function(e) { handleListClick(e, "downloads-content"); });
+
+    document.getElementById("bookmarks-content")?.addEventListener("keydown", function(e) {
+        if (e.key !== "Enter") return;
+        var tt = e.target.closest(".tree-toggle");
+        if (tt) { e.preventDefault(); toggleTreeFolder(tt); return; }
+        var it = e.target.closest(".item");
+        if (it) openUrl(it.dataset.url, true);
+    });
+    document.getElementById("history-content")?.addEventListener("keydown", function(e) {
+        if (e.key !== "Enter") return;
+        var it = e.target.closest(".item");
+        if (it) openUrl(it.dataset.url, true);
+    });
+    document.getElementById("downloads-content")?.addEventListener("keydown", function(e) {
+        if (e.key !== "Enter") return;
+        var it = e.target.closest(".item");
+        if (it) {
+            var ab = it.querySelector('[data-action="open"]');
+            if (ab) ab.click();
+        }
+    });
+
+    window.addEventListener("storage", function(e) {
+        if (e.key === BOOKMARKS_KEY || e.key === "ffHistory" || e.key === "ffHistoryFlat" || e.key === "ffDownloads") render();
+    });
+    window.addEventListener("message", function(e) {
+        if (location.origin !== "file://" && e.origin !== location.origin) return;
+        var d = e.data;
+        if (d && (d.type === "bookmarks-changed" || d.type === "history-changed" || d.type === "downloads-changed" || d.type === "navigated")) render();
+    });
+    if (window.i18n) {
+        var oa = window.i18n.apply && window.i18n.apply.bind(window.i18n);
+        window.i18n.apply = function() { if (oa) oa(); render(); };
+    }
+    document.addEventListener("DOMContentLoaded", function() {
+        render();
+        var s = document.getElementById("search-input");
+        if (s) requestAnimationFrame(function() { s.focus(); });
+        // Support ?view=bookmarks|history|downloads
+        var params = new URLSearchParams(location.search);
+        var view = params.get("view");
+        if (view && ["bookmarks", "history", "downloads"].includes(view)) switchView(view);
+    });
+})();
+
+</script>
+</body>
+</html>

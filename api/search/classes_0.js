@@ -1,0 +1,27 @@
+var searchData=
+[
+  ['pwaosappcreateinfo',['pwaosAppCreateInfo',['../structpwaosAppCreateInfo.html',1,'']]],
+  ['pwaosappfpsinfo',['pwaosAppFpsInfo',['../structpwaosAppFpsInfo.html',1,'']]],
+  ['pwaosappstoppinginfoext',['pwaosAppStoppingInfoExt',['../structpwaosAppStoppingInfoExt.html',1,'']]],
+  ['pwaosasynccallbackinfo',['pwaosAsyncCallbackInfo',['../structpwaosAsyncCallbackInfo.html',1,'']]],
+  ['pwaosbaseinstructure',['pwaosBaseInStructure',['../structpwaosBaseInStructure.html',1,'']]],
+  ['pwaosbaseoutstructure',['pwaosBaseOutStructure',['../structpwaosBaseOutStructure.html',1,'']]],
+  ['pwaoseventdataappstatuschanged',['pwaosEventDataAppStatusChanged',['../structpwaosEventDataAppStatusChanged.html',1,'']]],
+  ['pwaoseventdatabuffer',['pwaosEventDataBuffer',['../structpwaosEventDataBuffer.html',1,'']]],
+  ['pwaoseventdatainstancestatuschanged',['pwaosEventDataInstanceStatusChanged',['../structpwaosEventDataInstanceStatusChanged.html',1,'']]],
+  ['pwaosinitializeinfo',['pwaosInitializeInfo',['../structpwaosInitializeInfo.html',1,'']]],
+  ['pwaosinstancecreateinfo',['pwaosInstanceCreateInfo',['../structpwaosInstanceCreateInfo.html',1,'']]],
+  ['pwaosinstanceproperties',['pwaosInstanceProperties',['../structpwaosInstanceProperties.html',1,'']]],
+  ['pwaosnetworkproxydetails',['pwaosNetworkProxyDetails',['../unionpwaosNetworkProxyDetails.html',1,'']]],
+  ['pwaosnetworkproxyinfo',['pwaosNetworkProxyInfo',['../structpwaosNetworkProxyInfo.html',1,'']]],
+  ['pwaosnetworkproxypacscriptinfo',['pwaosNetworkProxyPACScriptInfo',['../structpwaosNetworkProxyPACScriptInfo.html',1,'']]],
+  ['pwaosnetworkproxyserverinfo',['pwaosNetworkProxyServerInfo',['../structpwaosNetworkProxyServerInfo.html',1,'']]],
+  ['pwaosobjectinterfacecreateinfo',['pwaosObjectInterfaceCreateInfo',['../structpwaosObjectInterfaceCreateInfo.html',1,'']]],
+  ['pwaosprojectorcreateinfo',['pwaosProjectorCreateInfo',['../structpwaosProjectorCreateInfo.html',1,'']]],
+  ['pwaosprojectorcreatenativeinfoext',['pwaosProjectorCreateNativeInfoExt',['../structpwaosProjectorCreateNativeInfoExt.html',1,'']]],
+  ['pwaosprojectordrawcallbackbitmapdata',['pwaosProjectorDrawCallbackBitmapData',['../structpwaosProjectorDrawCallbackBitmapData.html',1,'']]],
+  ['pwaosprojectordrawcallbackdata',['pwaosProjectorDrawCallbackData',['../structpwaosProjectorDrawCallbackData.html',1,'']]],
+  ['pwaosuriinfo',['pwaosUriInfo',['../structpwaosUriInfo.html',1,'']]],
+  ['pwaosuseragentinfo',['pwaosUserAgentInfo',['../structpwaosUserAgentInfo.html',1,'']]],
+  ['pwaoswindowboundsinfo',['pwaosWindowBoundsInfo',['../structpwaosWindowBoundsInfo.html',1,'']]]
+];

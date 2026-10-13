@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0f0f12">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title data-i18n="networkErrorTitle">网络错误</title>
+    <script defer src="i18n.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        :root {
+            /* 深色主题（默认） */
+            --bg-primary: #0f0f12;
+            --bg-secondary: #1a1a1f;
+            --bg-tertiary: #242429;
+            --accent-primary: #ff6b35;
+            --accent-secondary: #ff8c5a;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-tertiary: rgba(255, 255, 255, 0.5);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --radius-md: clamp(10px, 1.2vw, 14px);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+            --font-mono: "SF Mono", "Cascadia Code", "DejaVu Sans Mono", "Ubuntu Mono", "Consolas", monospace;
+        }
+        /* 浅色主题覆盖 */
+        :root[data-theme="light"] {
+            --bg-primary: #f5f5f7;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #ebebed;
+            --text-primary: #1d1d1f;
+            --text-secondary: rgba(0, 0, 0, 0.6);
+            --text-tertiary: rgba(0, 0, 0, 0.4);
+            --border-subtle: rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+        }
+        :root { color-scheme: dark; }
+        :root[data-theme="light"] { color-scheme: light; }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .error-container {
+            max-width: 520px;
+            width: 100%;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg, 16px);
+            padding: 32px 28px;
+            box-shadow: var(--shadow-lg);
+            animation: cardIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        @keyframes cardIn {
+            from { opacity: 0; transform: scale(0.96) translateY(12px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .error-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .error-icon {
+            font-size: 48px;
+            line-height: 1;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+        .error-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .error-message {
+            font-size: 15px;
+            color: var(--text-secondary);
+            margin: 8px 0 16px;
+            line-height: 1.6;
+        }
+        .error-url-box {
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin: 12px 0 20px;
+            border-left: 3px solid var(--accent-primary);
+        }
+        .error-url-label {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+            display: block;
+        }
+        .error-url {
+            font-family: var(--font-mono);
+            font-size: 14px;
+            color: var(--text-primary);
+            word-break: break-all;
+        }
+
+        .error-details {
+            margin: 16px 0 20px;
+        }
+        .error-code {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            color: var(--text-tertiary);
+            background: var(--bg-tertiary);
+            padding: 6px 12px;
+            border-radius: 6px;
+            display: inline-block;
+            margin-top: 4px;
+        }
+        .error-suggestions {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin: 12px 0 20px;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            border-left: 3px solid var(--accent-primary);
+        }
+        .error-suggestions strong {
+            color: var(--text-primary);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-decoration: none;
+            flex: 1 0 auto;
+            min-width: 80px;
+        }
+        .btn:hover {
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+        }
+        .btn:active {
+            transform: scale(0.97);
+        }
+        .btn-primary {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background: var(--accent-secondary);
+            border-color: var(--accent-secondary);
+            color: #fff;
+        }
+
+        .btn-icon {
+            font-size: 16px;
+        }
+
+        .error-footer {
+            margin-top: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: var(--text-tertiary);
+            border-top: 1px solid var(--border-subtle);
+            padding-top: 16px;
+        }
+        .error-footer a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.15s;
+        }
+        .error-footer a:hover {
+            color: var(--accent-primary);
+        }
+
+        @media (max-width: 480px) {
+            .error-container {
+                padding: 24px 18px;
+            }
+            .error-title {
+                font-size: 19px;
+            }
+            .btn {
+                flex: 1 1 100%;
+            }
+            .btn-group {
+                flex-direction: column;
+            }
+            .error-footer {
+                flex-direction: column;
+                gap: 6px;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container" role="status" aria-live="polite">
+        <!-- 头部 -->
+        <div class="error-header">
+            <div class="error-icon">🌐</div>
+            <h1 class="error-title" data-i18n="networkErrorTitle">网络错误</h1>
+        </div>
+
+        <!-- 错误详情信息 -->
+        <p class="error-message" id="error-message" data-i18n="networkErrorMessage">无法连接到网站，请检查网络连接。</p>
+
+        <!-- 域名 / URL -->
+        <div class="error-url-box">
+            <span class="error-url-label" data-i18n="networkErrorUrlLabel">尝试访问的地址</span>
+            <div class="error-url" id="error-url">—</div>
+        </div>
+
+        <!-- 错误代码 & 详细信息 -->
+        <div class="error-details">
+            <div id="error-code-block" style="display:none;">
+                <span data-i18n="networkErrorCodeLabel">错误代码</span>
+                <code class="error-code" id="error-code"></code>
+            </div>
+            <div class="error-suggestions" id="error-suggestions">
+                <strong data-i18n="networkErrorSuggestionsTitle">建议：</strong>
+                <span data-i18n="networkErrorSuggestionsText">请检查网络连接、代理设置，或尝试刷新页面。如果问题持续，可能是网站服务器暂时不可用。</span>
+            </div>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="btn-group">
+            <button class="btn btn-primary" id="retry-btn">
+                <span class="btn-icon">⟳</span>
+                <span data-i18n="retry">重试</span>
+            </button>
+            <button class="btn" id="back-btn">
+                <span class="btn-icon">←</span>
+                <span data-i18n="goBack">返回上一页</span>
+            </button>
+            <button class="btn" id="copy-btn">
+                <span class="btn-icon">📋</span>
+                <span data-i18n="copyErrorDetails">复制详情</span>
+            </button>
+        </div>
+
+        <!-- 底部 -->
+        <div class="error-footer">
+            <span data-i18n="networkErrorFooter">如果您经常遇到此问题，请检查网络或代理设置。</span>
+            <a href="about:settings" data-i18n="openSettings">打开设置</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            window.i18n.init();
+        });
+
+        let pwaos_ = null;
+        let app_id = null;
+        function pwaos_onLoad() {
+            let urlObj = new URL(window.location.href , document.baseURI);
+            app_id = urlObj.searchParams.get('app_id') || '';
+        }
+
+        // ============================================================
+        //  主题同步（参照 newtab.html）
+        // ============================================================
+        function applyTheme(value) {
+            const v = value === 'light' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', v);
+            const meta = document.querySelector('meta[name="theme-color"]');
+            if (meta) meta.setAttribute('content', v === 'light' ? '#f5f5f7' : '#0f0f12');
+        }
+
+        function applyLanguage(lang) {
+            if (window.i18n && typeof window.i18n.setLanguage === 'function') {
+                window.i18n.setLanguage(lang);
+            }
+        }
+
+        (function initThemeFromURL() {
+            const params = new URLSearchParams(location.search);
+            const theme = params.get('theme');
+            if (theme) applyTheme(theme);
+        })();
+
+        // 监听 localStorage 变化（如果主题在另一个标签页更改）
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'data-theme' || e.key === 'ffTheme') {
+                const newTheme = e.newValue;
+                if (newTheme) applyTheme(newTheme);
+            }
+            else if (e.key === 'ui_language' && window.i18n) {
+                applyLanguage(e.newValue);
+            }
+        });
+
+        // ============================================================
+        //  原有的错误处理逻辑
+        // ============================================================
+        (function() {
+            const params = new URLSearchParams(window.location.search);
+            const host = params.get('host') || '';
+            const message = params.get('message') || '';
+            const code = params.get('code') || '';
+
+            if (window.i18n) {
+                window.i18n.apply?.();
+            }
+
+            const urlEl = document.getElementById('error-url');
+            const messageEl = document.getElementById('error-message');
+            const codeEl = document.getElementById('error-code');
+            const codeBlock = document.getElementById('error-code-block');
+
+            if (host) {
+                urlEl.textContent = host;
+                document.title = `${document.title}: ${host}`;
+            } else {
+                urlEl.textContent = '—';
+            }
+
+            if (message) {
+                messageEl.textContent = message;
+            }
+
+            if (code) {
+                codeEl.textContent = code;
+                codeBlock.style.display = 'block';
+            }
+
+            document.getElementById('retry-btn').addEventListener('click', () => {
+                if (app_id) {
+                    pwaos_.appManager.getAppInfo(app_id).then(function(value) {
+                        if (value?.info.appId == app_id)
+                            pwaos_.appManager.reload(app_id);
+                    });
+                }
+            });
+
+            document.getElementById('back-btn').addEventListener('click', () => {
+                if (app_id) {
+                    pwaos_.appManager.getAppInfo(app_id).then(function(value) {
+                        if (value?.info.appId == app_id)
+                            pwaos_.appManager.goBack(app_id);
+                    });
+                }
+            });
+
+            document.getElementById('copy-btn').addEventListener('click', () => {
+                const lines = [
+                    `URL: ${host || '—'}`,
+                    `Message: ${message || '—'}`,
+                    `Code: ${code || '—'}`,
+                    `User Agent: ${navigator.userAgent}`,
+                    `Timestamp: ${new Date().toISOString()}`
+                ];
+                const text = lines.join('\n');
+                navigator.clipboard.writeText(text).then(() => {
+                    if (window.showToast) {
+                        window.showToast(i18n.t('copied') || '已复制', 'success', 1500);
+                    } else {
+                        alert(i18n.t('copied') || '已复制');
+                    }
+                }).catch(() => {
+                    alert(text);
+                });
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    document.getElementById('retry-btn').click();
+                } else if (e.key === 'Escape') {
+                    document.getElementById('back-btn').click();
+                } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' ||
+                           e.key === 'ArrowRight' || e.key === 'ArrowDown' ||
+                           e.key === 'Home' || e.key === 'End') {
+                    // Cycle focus through the action buttons when no input is focused.
+                    // Same keyboard-nav pattern as the main app's tab strip.
+                    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+                    const order = ['retry-btn', 'back-btn', 'copy-btn'];
+                    const visible = order
+                        .map(id => document.getElementById(id))
+                        .filter(el => el && !el.hidden && getComputedStyle(el).display !== 'none');
+                    if (visible.length < 2) return;
+                    const currentId = document.activeElement?.id;
+                    let idx = visible.findIndex(el => el.id === currentId);
+                    e.preventDefault();
+                    if (idx === -1) {
+                        visible[0].focus();
+                        return;
+                    }
+                    if (e.key === 'Home') {
+                        visible[0].focus();
+                    } else if (e.key === 'End') {
+                        visible[visible.length - 1].focus();
+                    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                        const prev = (idx - 1 + visible.length) % visible.length;
+                        visible[prev].focus();
+                    } else {
+                        const next = (idx + 1) % visible.length;
+                        visible[next].focus();
+                    }
+                }
+            });
+
+            if (window.i18n) {
+                document.addEventListener('languagechange', () => {
+                    window.i18n.apply?.();
+                });
+            }
+
+            if (window.requestService) {
+                use_pwaos = true;
+                window.requestService('pwaos.runtime').then(success => {
+                    if (success) {
+                        pwaos_ = pwaos.runtime;
+                        console.log("PwaOS version: " + pwaos_.kVersion);
+                        pwaos_.init().then(pwaos_onLoad);
+                    }
+                }).catch(err => console.log("Failed to requestService: " + err));
+            }
+        })();
+    </script>
+</body>
+</html>

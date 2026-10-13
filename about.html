@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>About | pwaOS</title>
+    <meta name="description" content="About the pwaos team — PWA and XR runtime patents.">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script>
+      /* Color mode follows the OS automatically — prefers-color-scheme,
+         applied before CSS to avoid a flash of the wrong mode. */
+      (function () {
+        var mq = window.matchMedia('(prefers-color-scheme: light)');
+        function apply() {
+          document.documentElement.setAttribute('data-theme', mq.matches ? 'light' : 'dark');
+        }
+        apply();
+        if (mq.addEventListener) mq.addEventListener('change', apply);
+        else if (mq.addListener) mq.addListener(apply); /* older Safari */
+      })();
+    </script>
+    <link rel="icon" href="images/logo/favicon.svg" type="image/svg+xml">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/site.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container">
+        <div class="nav-row">
+          <a class="brand" href="index.html">
+            <img class="brand-logo" src="images/logo/pwaos-mark-small.svg" alt="pwaOS logo" width="30" height="30" style="background: transparent; border: 0; padding: 0;">
+            <span>pwaOS</span>
+          </a>
+          <nav class="site-nav" aria-label="Main">
+            <a href="index.html">Home</a>
+            <a href="demo.html">Demo</a>
+            <a href="usage.html">Usage</a>
+            <a href="api/index.html">Docs</a>
+            <a class="active" href="about.html" aria-current="page">About</a>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <main class="page">
+      <div class="container">
+        <p class="eyebrow">$ pwaos --team</p>
+        <h1 class="section-title">About us</h1>
+        <p class="section-sub">Two patents covering the PWA and XR runtime — software testing is in progress ahead of release.</p>
+
+        <div class="card">
+          <span class="patent-id"><a href="https://patents.google.com/patent/CN115729614A">CN115729614A</a></span>
+          <p><strong>Progressive Web App standard-based runtime library, data interaction method, device and medium.</strong> Registered at <a href="http://patents.google.com">patents.google.com</a> and <a href="https://cpquery.cponline.cnipa.gov.cn/">cponline.cnipa.gov.cn</a>.</p>
+        </div>
+
+        <div class="card">
+          <span class="patent-id"><a href="https://patents.google.com/patent/CN116954824A">CN116954824A</a></span>
+          <p><strong>A runtime system, data interaction method, device, and media that provides a multiple-process environment to execute various extended reality (XR) specification based applications and 2D applications.</strong></p>
+        </div>
+
+        <hr class="divider">
+
+        <div class="card" style="display: flex; align-items: center; gap: 24px; flex-wrap: wrap;">
+          <img src="images/logo/png/pwaos-icon-192.png" alt="pwaOS logo" style="width: 96px; border-radius: 12px;">
+          <p style="margin: 0; max-width: 60ch;">The pwaos team builds the runtime, the shell, the browser, the appstore and the developer SDK. Find the project on <a href="https://github.com/daqingzd/pwaos">GitHub</a> or try the <a href="demo.html">demo</a>.</p>
+        </div>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-row">
+          <span>© 2026 pwaos team</span>
+          <span class="mono">a Progressive Web App standard-based runtime</span>
+          <div class="footer-links">
+            <a href="https://github.com/daqingzd/pwaos">GitHub</a>
+            <a href="api/index.html">API docs</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
