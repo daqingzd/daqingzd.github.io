@@ -1,1 +1,281 @@
-Hello World
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>pwaOS — Progressive Web App runtime</title>
+    <meta name="description" content="pwaOS is a Progressive Web App standard-based runtime library with native extension support — client APIs for C/C++, JavaScript, Rust, Java, Mojo and C#.">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script>
+      /* Color mode follows the OS automatically — prefers-color-scheme,
+         applied before CSS to avoid a flash of the wrong mode. */
+      (function () {
+        var mq = window.matchMedia('(prefers-color-scheme: light)');
+        function apply() {
+          document.documentElement.setAttribute('data-theme', mq.matches ? 'light' : 'dark');
+        }
+        apply();
+        if (mq.addEventListener) mq.addEventListener('change', apply);
+        else if (mq.addListener) mq.addListener(apply); /* older Safari */
+      })();
+    </script>
+    <link rel="icon" href="images/logo/favicon.svg" type="image/svg+xml">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/site.css">
+  </head>
+  <body>
+    <a href="https://github.com/daqingzd/pwaos" class="github-corner" aria-label="View source on GitHub"><svg width="64" height="64" viewBox="0 0 250 250" style="fill:var(--gc-fill); color:var(--gc-ink);" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+    <header class="site-header">
+      <div class="container">
+        <div class="nav-row">
+          <a class="brand" href="index.html">
+            <img class="brand-logo" src="images/logo/pwaos-mark-small.svg" alt="pwaOS logo" width="30" height="30" style="background: transparent; border: 0; padding: 0;">
+            <span>pwaOS</span>
+          </a>
+          <nav class="site-nav" aria-label="Main">
+            <a class="active" href="index.html" aria-current="page">Home</a>
+            <a href="demo.html">Demo</a>
+            <a href="usage.html">Usage</a>
+            <a href="api/index.html">Docs</a>
+            <a href="about.html">About</a>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <main class="page">
+      <div class="container">
+        <div class="hero">
+          <div>
+            <p class="eyebrow">$ pwaos --about</p>
+            <h1 class="hero-title">Run web apps with native power.</h1>
+            <p class="lede">pwaOS is a Progressive Web App standard-based runtime library. Completely standard web support, flexible native extension integration, and a small fast GPU-accelerated core — served through a Service-Oriented Architecture.</p>
+            <div class="btn-row">
+              <a class="btn btn-primary" href="demo.html">Try the demo</a>
+              <a class="btn btn-ghost" href="https://github.com/daqingzd/pwaos">Source on GitHub</a>
+            </div>
+              <div class="api-chips" aria-label="Supported client APIs">
+                <a class="chip" href="https://github.com/daqingzd/shell.pwa" target="_blank" rel="noopener">C/C++</a>
+                <a class="chip" href="https://github.com/daqingzd/browser.pwa" target="_blank" rel="noopener">JavaScript</a>
+                <a class="chip" target="_blank" rel="noopener">Python</a>
+                <a class="chip" target="_blank" rel="noopener">Rust</a>
+                <a class="chip" target="_blank" rel="noopener">Java</a>
+                <a class="chip" href="https://github.com/daqingzd/pwaos-node" target="_blank" rel="noopener">NodeJS</a>
+                <a class="chip" target="_blank" rel="noopener">C#</a>
+              </div>
+          </div>
+
+          <div class="section-tabs">
+          <div class="tab-bar" role="tablist" aria-label="Runtime details">
+            <button id="tab-architecture" class="active" role="tab" aria-selected="true" aria-controls="panel-architecture" data-tab="architecture">Architecture</button>
+            <button id="tab-pwa-support" role="tab" aria-selected="false" aria-controls="panel-pwa-support" data-tab="pwa-support" tabindex="-1">PWA support</button>
+            <button id="tab-embedder" role="tab" aria-selected="false" aria-controls="panel-embedder" data-tab="embedder" tabindex="-1">Embedder API</button>
+            <button id="tab-c-abi" role="tab" aria-selected="false" aria-controls="panel-c-abi" data-tab="c-abi" tabindex="-1">C ABI</button>
+          </div>
+
+          <section id="panel-architecture" class="tab-panel" role="tabpanel" aria-labelledby="tab-architecture">
+            <h2 class="section-title">Runtime architecture</h2>
+            <p class="section-sub">PWAOS Runtime is built on a Service-Oriented Architecture (SOA), implemented as <code>pwaos_server</code>. It is language- and backend-neutral, supports flexible threading model, and is independent of any specific process model. Two client interfaces reach its services:</p>
+
+            <div class="arch-grid">
+              <div class="card">
+                <span class="iface-tag">C ABI</span>
+                <h3>Native clients</h3>
+                <p>A stable, versioned C ABI for native clients. C/C++ — and other languages via C interop — interact using instance/app/projector handles, extensible javascript interface, callbacks, and event polling.</p>
+              </div>
+              <div class="card">
+                <span class="iface-tag">Mojo</span>
+                <h3>Webapp clients</h3>
+                <p>JavaScript clients access runtime services via Mojo.</p>
+              </div>
+            </div>
+
+            <div class="api-chips" aria-label="Runtime properties">
+              <span class="chip">language- and backend-neutral</span>
+              <span class="chip">flexible threading</span>
+              <span class="chip">optional Mojo integration</span>
+              <span class="chip">process-model independent</span>
+            </div>
+          </section>
+
+          <section id="panel-pwa-support" class="tab-panel" role="tabpanel" aria-labelledby="tab-pwa-support" hidden>
+            <h2 class="section-title">PWA support</h2>
+            <p class="section-sub">Easily build all kinds of web applications with the runtime's PWA capabilities — then run them as native applications, such as desktop, browser, console, or contents apps.</p>
+
+            <div class="apps-grid">
+              <div class="card">
+                <h3>WebApp</h3>
+                <p>A Web application with full standards-based web support, capable of using the Runtime Client API to integrate native capabilities.</p>
+              </div>
+              <div class="card">
+                <h3>Desktop</h3>
+                <p>Runs all child pwaApps in its own window as a desktop environment.</p>
+              </div>
+              <div class="card">
+                <h3>Browser</h3>
+                <p>Runs kEmbedContents-type pwaApps and displays them as tabs within the browser.</p>
+              </div>
+              <div class="card">
+                <h3>Console</h3>
+                <p>A text UI inside the pwaos shell, it is suited for command-line tools, embedded shells, and interactive terminal scenarios.</p>
+              </div>
+              <div class="card">
+                <h3>Contents</h3>
+                <p>No window — for embedded or projection jobs.</p>
+              </div>
+            </div>
+          </section>
+
+          <section id="panel-embedder" class="tab-panel" role="tabpanel" aria-labelledby="tab-embedder" hidden>
+            <h2 class="section-title">Embedder API for C++</h2>
+            <div class="card">
+              <span class="iface-tag">C++</span>
+              <h3>Embed the runtime in your own process</h3>
+              <p>C++ host apps can embed the runtime directly into their process, integrating PWA capabilities with custom windowing, input, and rendering pipelines. See the <a href="usage.html">sample client</a>.</p>
+            </div>
+          </section>
+
+          <section id="panel-c-abi" class="tab-panel" role="tabpanel" aria-labelledby="tab-c-abi" hidden>
+            <h2 class="section-title">Runtime C ABI highlights</h2>
+            <p class="section-sub">One stable, versioned interface covers everything a native client needs.</p>
+
+            <div class="abi-grid">
+              <div class="abi-item">
+                <span class="abi-num" aria-hidden="true">01</span>
+                <div>
+                  <h3>Instance lifecycle</h3>
+                  <p>Init and shutdown, create/destroy, properties, runtime path, command line, and status callbacks.</p>
+                </div>
+              </div>
+              <div class="abi-item">
+                <span class="abi-num" aria-hidden="true">02</span>
+                <div>
+                  <h3>App management</h3>
+                  <p>Create and destroy PWA apps — native, browser, console, desktop, or headless — and set URL and size.</p>
+                </div>
+              </div>
+              <div class="abi-item">
+                <span class="abi-num" aria-hidden="true">03</span>
+                <div>
+                  <h3>JavaScript bridge</h3>
+                  <p>Add and remove JS interfaces; define native methods and properties callable from web content.</p>
+                </div>
+              </div>
+              <div class="abi-item">
+                <span class="abi-num" aria-hidden="true">04</span>
+                <div>
+                  <h3>Window and input</h3>
+                  <p>Bounds, pointer/mouse and Android events, execute JS, FPS, density, and input method.</p>
+                </div>
+              </div>
+              <div class="abi-item">
+                <span class="abi-num" aria-hidden="true">05</span>
+                <div>
+                  <h3>Developer tools</h3>
+                  <p>Inspect any app through its DevTools URI.</p>
+                </div>
+              </div>
+              <div class="abi-item">
+                <span class="abi-num" aria-hidden="true">06</span>
+                <div>
+                  <h3>User agent</h3>
+                  <p>Get and set the user agent string.</p>
+                </div>
+              </div>
+              <div class="abi-item">
+                <span class="abi-num" aria-hidden="true">07</span>
+                <div>
+                  <h3>Network proxy</h3>
+                  <p>DIRECT, AUTO_DETECT, PAC_SCRIPT, FIXED_SERVERS, and SYSTEM proxy modes.</p>
+                </div>
+              </div>
+              <div class="abi-item">
+                <span class="abi-num" aria-hidden="true">08</span>
+                <div>
+                  <h3>Projection API</h3>
+                  <p>Create and destroy projectors; offscreen or native-widget rendering, multiple backends, draw callbacks.</p>
+                </div>
+              </div>
+              <div class="abi-item">
+                <span class="abi-num" aria-hidden="true">09</span>
+                <div>
+                  <h3>Event polling</h3>
+                  <p><code>pwaosInstance_pollEvent</code> delivers status changes and stopping reasons.</p>
+                </div>
+              </div>
+              <div class="abi-item">
+                <span class="abi-num" aria-hidden="true">10</span>
+                <div>
+                  <h3>Cross-platform</h3>
+                  <p>Windows, Linux, and Android, with automatic graphics API detection.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="btn-row section-cta">
+              <a class="btn btn-primary" href="usage.html">Get the SDK</a>
+              <a class="btn btn-ghost" href="api/index.html">API reference</a>
+            </div>
+          </section>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-row">
+          <span>© 2026 pwaos team</span>
+          <span class="mono">a Progressive Web App standard-based runtime</span>
+          <div class="footer-links">
+            <a href="https://github.com/daqingzd/pwaos">GitHub</a>
+            <a href="api/index.html">API docs</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      (function () {
+        const bar = document.querySelector('.tab-bar');
+        const tabs = Array.from(bar.querySelectorAll('button'));
+
+        function activate(id, setHash) {
+          tabs.forEach(t => {
+            const on = t.dataset.tab === id;
+            t.classList.toggle('active', on);
+            t.setAttribute('aria-selected', on ? 'true' : 'false');
+            t.tabIndex = on ? 0 : -1;
+            document.getElementById('panel-' + t.dataset.tab).hidden = !on;
+          });
+          if (setHash) history.replaceState(null, '', '#' + id);
+        }
+
+        tabs.forEach(t => t.addEventListener('click', () => activate(t.dataset.tab, true)));
+
+        /* Roving focus + arrow-key navigation, per the tabs ARIA pattern */
+        bar.addEventListener('keydown', e => {
+          if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+          const cur = tabs.findIndex(t => t.getAttribute('aria-selected') === 'true');
+          const next = e.key === 'ArrowRight' ? (cur + 1) % tabs.length : (cur - 1 + tabs.length) % tabs.length;
+          activate(tabs[next].dataset.tab, true);
+          tabs[next].focus();
+          e.preventDefault();
+        });
+
+        /* Deep links: #architecture, #pwa-support, #embedder, #c-abi —
+           the same anchors the stacked sections used before the tabs. */
+        function fromHash() {
+          const h = location.hash.slice(1);
+          if (tabs.some(t => t.dataset.tab === h)) activate(h, false);
+        }
+        if (location.hash) fromHash();
+        window.addEventListener('hashchange', fromHash);
+      })();
+    </script>
+  </body>
+</html>

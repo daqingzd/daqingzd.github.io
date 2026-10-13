@@ -1,0 +1,44 @@
+{
+    "name": "PwaOS Browser",
+    "short_name": "Browser",
+    "description": "Premium browser built with PwaOS SDK",
+    "start_url": "/browser/index.html",
+    "display": "standalone",
+    "orientation": "any",
+    "background_color": "#0f0f12",
+    "theme_color": "#ff6b35",
+    "lang": "zh-CN",
+    "scope": "/browser/",
+    "icons": [
+        {
+            "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%23ff6b35'/><stop offset='100%25' stop-color='%23ff8c5a'/></linearGradient></defs><rect width='512' height='512' rx='96' fill='url(%23g)'/><path d='M256 120 L290 210 L388 210 L310 270 L340 360 L256 300 L172 360 L202 270 L124 210 L222 210 Z' fill='white' opacity='0.95'/></svg>",
+            "sizes": "512x512",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%23ff6b35'/><stop offset='100%25' stop-color='%23ff8c5a'/></linearGradient></defs><rect width='192' height='192' rx='36' fill='url(%23g)'/><path d='M96 45 L109 79 L146 79 L116 101 L127 135 L96 113 L65 135 L76 101 L46 79 L83 79 Z' fill='white' opacity='0.95'/></svg>",
+            "sizes": "192x192",
+            "type": "image/svg+xml",
+            "purpose": "any"
+        }
+    ],
+    "categories": ["browser", "productivity"],
+    "screenshots": [],
+    "shortcuts": [
+        {
+            "name": "新标签页",
+            "short_name": "新建",
+            "url": "/browser/index.html?action=newtab",
+            "description": "打开新标签页"
+        },
+        {
+            "name": "书签",
+            "short_name": "书签",
+            "url": "/browser/index.html?action=bookmarks",
+            "description": "查看书签"
+        }
+    ],
+    "related_applications": [],
+    "prefer_related_applications": false
+}

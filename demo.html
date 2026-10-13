@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Demo | pwaOS</title>
+    <meta name="description" content="Install the pwaOS demo — Linux .deb, Windows .exe and Android .apk builds.">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script>
+      /* Color mode follows the OS automatically — prefers-color-scheme,
+         applied before CSS to avoid a flash of the wrong mode. */
+      (function () {
+        var mq = window.matchMedia('(prefers-color-scheme: light)');
+        function apply() {
+          document.documentElement.setAttribute('data-theme', mq.matches ? 'light' : 'dark');
+        }
+        apply();
+        if (mq.addEventListener) mq.addEventListener('change', apply);
+        else if (mq.addListener) mq.addListener(apply); /* older Safari */
+      })();
+    </script>
+    <link rel="icon" href="images/logo/favicon.svg" type="image/svg+xml">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/site.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container">
+        <div class="nav-row">
+          <a class="brand" href="index.html">
+            <img class="brand-logo" src="images/logo/pwaos-mark-small.svg" alt="pwaOS logo" width="30" height="30" style="background: transparent; border: 0; padding: 0;">
+            <span>pwaOS</span>
+          </a>
+          <nav class="site-nav" aria-label="Main">
+            <a href="index.html">Home</a>
+            <a class="active" href="demo.html" aria-current="page">Demo</a>
+            <a href="usage.html">Usage</a>
+            <a href="api/index.html">Docs</a>
+            <a href="about.html">About</a>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <main class="page">
+      <div class="container">
+        <p class="eyebrow">$ pwaos_demo install</p>
+        <h1 class="section-title">Install the demo</h1>
+        <p class="section-sub">Grab a demo build and run pwaOS on your platform.</p>
+
+        <div class="dl-list">
+          <a class="dl-card" href="https://github.com/daqingzd/pwaos/releases/download/v0.2.a/pwaos-demo-stable_0.2.a.0-1_amd64.deb" download>
+            <div>
+              <div class="dl-name">Linux</div>
+              <div class="dl-file">.deb · amd64</div>
+            </div>
+            <span class="dl-get">Download ↓</span>
+          </a>
+          <a class="dl-card" href="https://github.com/daqingzd/pwaos/releases/download/v0.2.a/pwaos_demo.packed.7z" download>
+            <div>
+              <div class="dl-name">Windows</div>
+              <div class="dl-file">.exe · packed 7z</div>
+            </div>
+            <span class="dl-get">Download ↓</span>
+          </a>
+          <div class="dl-card disabled" aria-disabled="true" title="Android build coming soon">
+            <div>
+              <div class="dl-name">Android</div>
+              <div class="dl-file">.apk · coming soon</div>
+            </div>
+            <span class="dl-get">Soon</span>
+          </div>
+        </div>
+For questions or to request the demo for other platforms or CPU architectures.<address>Please contact: <a href="mailto:daqingzd@pwaos.net">daqingzd@pwaos.net</a></address>
+        <hr class="divider">
+
+        <p class="eyebrow">$ pwaos_shell screenshot</p>
+        <h2 class="section-title">Screen shots</h2>
+        <p class="section-sub">The pwaos_shell running the pwaos runtime.</p>
+
+        <figure class="shot-frame" style="max-width: 760px;">
+          <img src="images/pwaos_shell.png" alt="pwaOS shell terminal showing the help command, features panel and command reference">
+          <figcaption>out/Release.linux/shell_app.pwa — pwaos shell</figcaption>
+        </figure>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-row">
+          <span>© 2026 pwaos team</span>
+          <span class="mono">a Progressive Web App standard-based runtime</span>
+          <div class="footer-links">
+            <a href="https://github.com/daqingzd/pwaos">GitHub</a>
+            <a href="api/index.html">API docs</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

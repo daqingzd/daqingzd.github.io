@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- pwaOS app icon — small-size variant: window reduced to 3 bold shapes -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#151a26"/>
+      <stop offset="1" stop-color="#0b0d12"/>
+    </linearGradient>
+    <linearGradient id="pfill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4de0ef"/>
+      <stop offset="1" stop-color="#19a8c2"/>
+    </linearGradient>
+    <clipPath id="tile">
+      <rect x="16" y="16" width="480" height="480" rx="108"/>
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#tile)">
+    <rect x="16" y="16" width="480" height="480" fill="url(#bg)"/>
+  </g>
+
+  <path fill="url(#pfill)" fill-rule="evenodd"
+        d="M 145 82
+           H 271
+           A 106 106 0 0 1 271 294
+           H 185
+           V 392
+           A 18 18 0 0 1 167 410
+           H 145
+           A 18 18 0 0 1 127 392
+           V 100
+           A 18 18 0 0 1 145 82
+           Z
+           M 185 132
+           H 271
+           A 56 56 0 0 1 271 244
+           H 185
+           Z"/>
+
+  <!-- simplified window: title bar + body only, no fine detail -->
+  <rect x="223" y="162" width="66" height="52" rx="8" fill="#f5c542"/>
+  <rect x="223" y="180" width="66" height="34" rx="8" fill="#0b0d12"/>
+  <rect x="223" y="204" width="66" height="10" rx="5" fill="#19a8c2"/>
+</svg>

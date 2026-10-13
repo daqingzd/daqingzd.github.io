@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0f0f12">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Browser">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title data-i18n="newTabPage">New Tab</title>
+    <script defer src="i18n.js"></script>
+    <style>
+        :root {
+            --bg-primary: #0f0f12;
+            --bg-secondary: #1a1a1f;
+            --bg-tertiary: #242429;
+            --bg-elevated: #2a2a30;
+            --accent-primary: #ff6b35;
+            --accent-secondary: #ff8c5a;
+            --accent-subtle: rgba(255, 107, 53, 0.15);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-tertiary: rgba(255, 255, 255, 0.5);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+            --radius-xs: clamp(8px, 1vw, 12px);
+            --radius-md: clamp(10px, 1.2vw, 14px);
+            --radius-lg: clamp(14px, 1.6vw, 20px);
+            --radius-pill: clamp(22px, 3vw, 32px);
+            --space-1: clamp(2px, 0.25vw, 4px);
+            --space-2: clamp(4px, 0.5vw, 8px);
+            --space-3: clamp(6px, 0.75vw, 12px);
+            --space-4: clamp(8px, 1vw, 16px);
+            --space-5: clamp(12px, 1.5vw, 20px);
+            --space-6: clamp(16px, 2vw, 28px);
+            --space-8: clamp(24px, 3vw, 48px);
+            --space-10: clamp(32px, 4vw, 64px);
+            --fs-xs: clamp(11px, 1vw, 13px);
+            --fs-sm: clamp(13px, 1.2vw, 15px);
+            --fs-base: clamp(15px, 1.4vw, 17px);
+            --fs-icon: clamp(28px, 4vw, 56px);
+            --page-max-width: 1400px;
+        }
+        :root[data-theme="light"] {
+            --bg-primary: #f5f5f7;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #ebebed;
+            --bg-elevated: #fafafa;
+            --text-primary: #1d1d1f;
+            --text-secondary: rgba(0, 0, 0, 0.6);
+            --text-tertiary: rgba(0, 0, 0, 0.4);
+            --border-subtle: rgba(0, 0, 0, 0.08);
+            --accent-subtle: rgba(255, 107, 53, 0.18);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+        }
+        :root { color-scheme: dark; }
+        :root[data-theme="light"] { color-scheme: light; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            padding: var(--space-5);
+            overflow-y: auto;
+            container-type: inline-size;
+            container-name: page;
+        }
+
+        .search-container,
+        .tab-content {
+            width: 100%;
+            max-width: min(100% - var(--space-6), var(--page-max-width));
+            margin-inline: auto;
+        }
+
+        /* Search */
+        .search-container {
+            margin-block: var(--space-4) var(--space-8);
+        }
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-pill);
+            padding: var(--space-4) var(--space-5);
+            box-shadow: var(--shadow-lg);
+            transition: border-color 0.25s ease, box-shadow 0.25s ease;
+        }
+        .search-box:focus-within {
+            border-color: var(--accent-primary);
+            box-shadow: var(--shadow-lg), 0 0 0 4px var(--accent-subtle);
+        }
+        .search-icon {
+            font-size: clamp(18px, 2vw, 22px);
+            margin-right: var(--space-4);
+            opacity: 0.6;
+        }
+        .search-input {
+            flex: 1;
+            min-width: 0;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--text-primary);
+            font-size: var(--fs-base);
+            font-weight: 450;
+        }
+        .search-input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        /* Section title */
+        .section-title {
+            font-size: var(--fs-xs);
+            font-weight: 600;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: var(--space-4);
+            margin-top: var(--space-6);
+        }
+        .section-title:first-of-type {
+            margin-top: 0;
+        }
+
+        /* ---- Shortcuts Grid ---- */
+        .shortcuts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(min(130px, 100%), 1fr));
+            gap: var(--space-4);
+            container-type: inline-size;
+            container-name: shortcuts;
+        }
+        .shortcut-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: var(--space-5) var(--space-4);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.2s ease, border-color 0.2s ease,
+                        transform 0.2s ease, box-shadow 0.2s ease;
+            position: relative;
+        }
+        .shortcut-card:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--accent-primary);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35);
+        }
+        .shortcut-card:active {
+            transform: translateY(-2px) scale(0.98);
+        }
+        /* Visible keyboard focus ring — otherwise users on keyboard can't
+           tell which card they're navigating to via Arrow/Home/End. */
+        .shortcut-card:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px var(--accent-subtle, rgba(255,107,53,0.25));
+        }
+        .shortcut-card:focus:not(:focus-visible) {
+            /* Suppress focus ring on mouse focus so it doesn't flash on click. */
+            box-shadow: none;
+        }
+        .shortcut-icon {
+            font-size: var(--fs-icon);
+            line-height: 1;
+            margin-bottom: var(--space-3);
+        }
+        .shortcut-title {
+            font-size: var(--fs-sm);
+            font-weight: 500;
+            text-align: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            width: 100%;
+            color: var(--text-secondary);
+        }
+        .shortcut-card:hover .shortcut-title { color: var(--text-primary); }
+
+        /* 快捷方式详情（悬停显示） */
+        .shortcut-details {
+            display: none;
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: var(--space-3) var(--space-4);
+            min-width: 200px;
+            max-width: 300px;
+            box-shadow: var(--shadow-lg);
+            z-index: 10;
+            pointer-events: none;
+            text-align: left;
+        }
+        .shortcut-card:hover .shortcut-details {
+            display: block;
+        }
+        .shortcut-details .detail-title {
+            font-weight: 600;
+            font-size: var(--fs-sm);
+            color: var(--text-primary);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .shortcut-details .detail-url {
+            font-size: var(--fs-xs);
+            color: var(--text-tertiary);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            margin-top: 2px;
+        }
+        .shortcut-details .detail-time {
+            font-size: var(--fs-xs);
+            color: var(--text-tertiary);
+            margin-top: 4px;
+        }
+
+        /* 编辑/删除按钮 - 强制绝对定位，确保在 Firefox 上也固定在顶部左右 */
+        .shortcut-edit, .shortcut-remove {
+            position: absolute !important;
+            top: 4px !important;
+            width: 22px !important;
+            height: 22px !important;
+            background: rgba(255,255,255,0.12);
+            border: none;
+            border-radius: 50%;
+            color: #fff;
+            font-size: 11px;
+            line-height: 1;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s, background 0.2s;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            z-index: 5 !important;
+            left: auto !important;
+            right: auto !important;
+            margin: 0 !important;
+        }
+        .shortcut-edit { left: 4px !important; }
+        .shortcut-remove { right: 4px !important; }
+
+        .shortcut-card:hover .shortcut-edit, .shortcut-card:hover .shortcut-remove { opacity: 1; }
+        .shortcut-edit:hover { background: var(--accent-primary); }
+        .shortcut-remove:hover { background: rgba(255,80,80,0.4); }
+
+        /* 自定义 tooltip（用于按钮） */
+        [data-tooltip]:not(.shortcut-edit):not(.shortcut-remove) {
+            position: relative !important;
+            display: inline-block !important;
+        }
+        [data-tooltip]:hover::after {
+            content: attr(data-tooltip);
+            position: absolute !important;
+            bottom: calc(100% + 4px) !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            padding: 4px 8px;
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-xs);
+            font-size: 11px;
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 20;
+            box-shadow: var(--shadow-sm);
+            display: block !important;
+        }
+
+        /* Add shortcut card */
+        .shortcut-add {
+            background: var(--bg-tertiary);
+            border: 2px dashed var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: var(--space-2);
+            color: var(--text-tertiary);
+        }
+        .shortcut-add:hover {
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 22px rgba(0, 0, 0, 0.2);
+        }
+        .shortcut-add .add-icon { font-size: clamp(36px, 5vw, 48px); }
+        .shortcut-add .add-label { font-size: var(--fs-sm); font-weight: 500; }
+
+        @container shortcuts (max-width: 560px) {
+            .shortcut-icon { font-size: clamp(24px, 9cqi, 36px); }
+            .shortcut-title { font-size: clamp(11px, 3.2cqi, 13px); }
+        }
+
+        /* ---- Suggestions Grid (infinite scroll) ---- */
+        .suggestions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
+            gap: var(--space-4);
+            container-type: inline-size;
+            container-name: suggestions;
+        }
+
+        .suggestion-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: var(--space-4);
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+            position: relative;
+            gap: var(--space-3);
+            animation: suggestionFadeIn 0.3s ease forwards;
+        }
+        .suggestion-card:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--accent-primary);
+            transform: translateY(-3px);
+        }
+
+        @keyframes suggestionFadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .suggestion-thumb {
+            width: 100%;
+            height: 140px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .suggestion-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .suggestion-thumb .fallback-icon {
+            font-size: 48px;
+            opacity: 0.4;
+        }
+
+        .suggestion-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 0;
+        }
+        .suggestion-title {
+            font-size: var(--fs-base);
+            font-weight: 600;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .suggestion-url {
+            font-size: var(--fs-xs);
+            color: var(--text-tertiary);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .suggestion-meta {
+            display: flex;
+            gap: 12px;
+            font-size: var(--fs-xs);
+            color: var(--text-secondary);
+            flex-wrap: wrap;
+        }
+        .suggestion-meta .rank {
+            background: var(--bg-tertiary);
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+        .suggestion-meta .category {
+            background: var(--accent-subtle);
+            color: var(--accent-primary);
+            padding: 2px 8px;
+            border-radius: 999px;
+        }
+
+        /* 建议卡片详情（悬停显示） */
+        .suggestion-details {
+            display: none;
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: var(--space-3) var(--space-4);
+            min-width: 240px;
+            max-width: 320px;
+            box-shadow: var(--shadow-lg);
+            z-index: 10;
+            pointer-events: none;
+            text-align: left;
+        }
+        .suggestion-card:hover .suggestion-details {
+            display: block;
+        }
+        .suggestion-details .detail-title {
+            font-weight: 600;
+            font-size: var(--fs-sm);
+            color: var(--text-primary);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .suggestion-details .detail-domain {
+            font-size: var(--fs-xs);
+            color: var(--text-tertiary);
+            margin-top: 2px;
+        }
+        .suggestion-details .detail-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 6px;
+            font-size: var(--fs-xs);
+            color: var(--text-secondary);
+        }
+        .suggestion-details .detail-stats span {
+            background: var(--bg-tertiary);
+            padding: 1px 6px;
+            border-radius: 999px;
+        }
+
+        /* ---- Infinite Scroll Trigger ---- */
+        #load-more-trigger {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: var(--space-6) 0;
+            color: var(--text-tertiary);
+            font-size: var(--fs-sm);
+        }
+        #load-more-trigger .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-subtle);
+            border-top-color: var(--accent-primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        #load-more-trigger.done {
+            color: var(--text-secondary);
+        }
+        #load-more-trigger.done .spinner {
+            display: none;
+        }
+
+        /* ---- Back to Top Button ---- */
+        #back-to-top {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 44px;
+            height: 44px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-subtle);
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-size: 20px;
+            box-shadow: var(--shadow-md);
+            transition: background 0.2s, transform 0.2s, opacity 0.2s;
+            z-index: 100;
+        }
+        #back-to-top:hover {
+            background: var(--accent-primary);
+            color: #fff;
+            transform: scale(1.05);
+        }
+        #back-to-top:active {
+            transform: scale(0.9);
+        }
+        #back-to-top.visible {
+            display: flex;
+        }
+
+        /* ---- Empty State (for suggestions) ---- */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-8) var(--space-4);
+            color: var(--text-tertiary);
+            text-align: center;
+            grid-column: 1 / -1;
+        }
+        .empty-icon { font-size: clamp(40px, 5vw, 64px); margin-bottom: var(--space-4); opacity: 0.5; }
+        .empty-text { font-size: var(--fs-base); }
+
+        /* ---- Shortcut Dialog (popup) ----
+           Two-layer structure: an inert visual scrim + a separate interactive
+           dialog box. Splitting them lets scroll/wheel events pass through to
+           the page underneath (the scrim has pointer-events:none), while the
+           dialog stays fully clickable. Clicking the scrim closes the dialog
+           via a document-level listener that checks if the click landed on
+           the scrim, not inside the dialog. */
+        .shortcut-dialog-scrim {
+            position: fixed;
+            inset: 0;
+            background: rgba(8, 8, 12, 0.6);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            z-index: 3000;
+            pointer-events: none;
+        }
+        .shortcut-dialog-scrim.active { display: block; }
+        .shortcut-dialog-scrim:not(.active) { display: none; }
+        .shortcut-dialog {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: clamp(300px, 90vw, 420px);
+            padding: 24px 28px;
+            background: linear-gradient(180deg, var(--bg-elevated) 0%, var(--bg-secondary) 100%);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            animation: dialogPopIn 180ms cubic-bezier(.18,1,.32,1) forwards;
+            z-index: 3001;
+        }
+        .shortcut-dialog:not(.active) { display: none; }
+        @keyframes dialogPopIn {
+            from { opacity: 0; transform: translate(-50%, calc(-50% - 12px)) scale(0.96); }
+            to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+        .shortcut-dialog h3 { font-size: 18px; font-weight: 600; margin-bottom: 16px; color: var(--text-primary); }
+        .shortcut-dialog label { display: block; font-size: 14px; font-weight: 500; color: var(--text-secondary); margin-bottom: 4px; }
+        .shortcut-dialog input {
+            width: 100%;
+            padding: 10px 12px;
+            margin-bottom: 12px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .shortcut-dialog input:focus { border-color: var(--accent-primary); box-shadow: 0 0 0 3px var(--accent-subtle); }
+        .dialog-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 12px; }
+        .dialog-actions button {
+            padding: 10px 20px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-subtle);
+            background: transparent;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .dialog-actions button:hover { background: var(--bg-hover); }
+        .dialog-actions button.primary { background: var(--accent-primary); border-color: var(--accent-primary); color: #fff; }
+        .dialog-actions button.primary:hover { background: var(--accent-secondary); border-color: var(--accent-secondary); }
+    </style>
+</head>
+<body>
+    <!-- Search -->
+    <div class="search-container">
+        <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-input" id="search-input" data-i18n-placeholder="searchOrUrl" placeholder="Search or enter URL" autofocus>
+        </div>
+    </div>
+
+    <!-- All content is now in a single container -->
+    <div class="tab-content active" id="main-content">
+        <!-- Shortcuts -->
+        <div class="section-title" data-i18n="shortcutTab">Shortcuts</div>
+        <div class="shortcuts-grid" id="shortcuts-grid"></div>
+
+        <!-- Suggestions (infinite scroll) -->
+        <div class="section-title" data-i18n="suggestions">Suggestions</div>
+        <div class="suggestions-grid" id="suggestions-grid"></div>
+
+        <!-- Infinite scroll trigger -->
+        <div id="load-more-trigger">
+            <div class="spinner"></div>
+            <span data-i18n="loading">Loading…</span>
+        </div>
+    </div>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" title="返回顶部" aria-label="返回顶部">↑</button>
+
+    <!-- Shortcut Dialog -->
+    <div class="shortcut-dialog-scrim" id="shortcut-dialog-scrim"></div>
+    <div class="shortcut-dialog" id="shortcut-dialog">
+            <h3 id="dialog-title" data-i18n="addShortcut">Add Shortcut</h3>
+            <label for="dialog-title-input" data-i18n="shortcutTitleLabel">Title</label>
+            <input type="text" id="dialog-title-input" data-i18n-placeholder="shortcutTitlePlaceholder" placeholder="e.g. Google" />
+            <label for="dialog-url-input" data-i18n="shortcutUrlLabel">URL</label>
+            <input type="text" id="dialog-url-input" data-i18n-placeholder="shortcutUrlPlaceholder" placeholder="https://..." />
+            <label for="dialog-icon-input" data-i18n="shortcutIconLabel">Icon (emoji or character)</label>
+            <input type="text" id="dialog-icon-input" placeholder="🔍" maxlength="2" />
+            <div class="dialog-actions">
+                <button id="dialog-cancel" data-i18n="cancel">Cancel</button>
+                <button id="dialog-save" class="primary" data-i18n="save">Save</button>
+           </div>
+   </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            window.i18n.init();
+            handleSearchInputSearchEngine();
+        });
+
+        let pwaos_ = null;
+        function pwaos_onLoad() {
+        }
+
+        // ============================================================
+        //  Theme & Language sync (same as before)
+        // ============================================================
+        function applyTheme(value) {
+            const v = value === 'light' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', v);
+            const meta = document.querySelector('meta[name="theme-color"]');
+            if (meta) meta.setAttribute('content', v === 'light' ? '#f5f5f7' : '#0f0f12');
+        }
+        function applyLanguage(lang) {
+            if (window.i18n && typeof window.i18n.setLanguage === 'function') {
+                window.i18n.setLanguage(lang);
+                handleSearchInputSearchEngine();
+            }
+        }
+        (function initFromURL() {
+            const params = new URLSearchParams(location.search);
+            const theme = params.get('theme');
+            if (theme) applyTheme(theme);
+        })();
+
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'ui_language' && window.i18n) {
+                window.i18n.init();
+                handleSearchInputSearchEngine();
+            }
+            if (e.key === 'data-theme' || e.key === 'ffTheme') {
+                const newTheme = e.newValue;
+                if (newTheme) applyTheme(newTheme);
+            }
+        });
+
+        // ============================================================
+        //  Shortcut handling (unchanged)
+        // ============================================================
+        const STORAGE_KEY = 'ffNewtabShortcuts';
+        const DEFAULT_SHORTCUTS = [
+            { icon: '🔥', title: 'Mozilla Firefox', url: 'https://www.firefox.com' },
+            { icon: '🔍', title: 'Google', url: 'https://www.google.com' },
+            { icon: '▶', title: 'YouTube', url: 'https://www.youtube.com' },
+            { icon: '💬', title: 'Twitter / X', url: 'https://twitter.com' },
+            { icon: '📘', title: 'Facebook', url: 'https://www.facebook.com' },
+            { icon: '🛒', title: 'Amazon', url: 'https://www.amazon.com' },
+            { icon: '📄', title: 'Wikipedia', url: 'https://www.wikipedia.org' },
+            { icon: '📧', title: 'Gmail', url: 'https://mail.google.com' }
+        ];
+
+        function getShortcuts() {
+            try {
+                const stored = localStorage.getItem(STORAGE_KEY);
+                if (stored) {
+                    const parsed = JSON.parse(stored);
+                    if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+                }
+            } catch (_) {}
+            return DEFAULT_SHORTCUTS;
+        }
+        function saveShortcuts(list) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+        }
+
+        const dialogScrim = document.getElementById('shortcut-dialog-scrim');
+        const dialogTitle = document.getElementById('dialog-title');
+        const titleInput = document.getElementById('dialog-title-input');
+        const urlInput = document.getElementById('dialog-url-input');
+        const iconInput = document.getElementById('dialog-icon-input');
+        const cancelBtn = document.getElementById('dialog-cancel');
+        const saveBtn = document.getElementById('dialog-save');
+        let editingIndex = -1;
+
+        function openDialog(shortcut = null) {
+            if (shortcut) {
+                dialogTitle.textContent = window.i18n ? window.i18n.t('editShortcut') : 'Edit Shortcut';
+                titleInput.value = shortcut.title || '';
+                urlInput.value = shortcut.url || '';
+                iconInput.value = shortcut.icon || '';
+                editingIndex = getShortcuts().indexOf(shortcut);
+            } else {
+                dialogTitle.textContent = window.i18n ? window.i18n.t('addShortcut') : 'Add Shortcut';
+                titleInput.value = '';
+                urlInput.value = '';
+                iconInput.value = '';
+                editingIndex = -1;
+            }
+            dialogScrim.classList.add('active');
+            document.getElementById('shortcut-dialog').classList.add('active');
+            titleInput.focus();
+        }
+        function closeDialog() {
+            dialogScrim.classList.remove('active');
+            document.getElementById('shortcut-dialog').classList.remove('active');
+        }
+        function saveShortcutFromDialog() {
+            const title = titleInput.value.trim() || 'Untitled';
+            const url = urlInput.value.trim();
+            const icon = iconInput.value.trim() || '🔗';
+            if (!url) {
+                const msg = window.i18n ? window.i18n.t('pleaseEnterUrl') : 'Please enter a valid URL.';
+                alert(msg);
+                return;
+            }
+            const list = getShortcuts();
+            const newItem = { icon, title, url };
+            if (editingIndex >= 0 && editingIndex < list.length) {
+                list[editingIndex] = newItem;
+            } else {
+                list.push(newItem);
+            }
+            saveShortcuts(list);
+            renderShortcuts();
+            closeDialog();
+        }
+        cancelBtn.addEventListener('click', closeDialog);
+        saveBtn.addEventListener('click', saveShortcutFromDialog);
+        // Click on the scrim (anywhere outside the dialog box) closes the dialog.
+        // The scrim itself has pointer-events:none so wheel events pass through to
+        // the page; we listen at document level instead and filter by target.
+        // We must also ignore clicks on the elements that OPEN the dialog
+        // (#add-shortcut-btn, .shortcut-edit) — without this guard, the click
+        // bubbles here after the opener runs, the scrim is now 'active', and
+        // we'd immediately close the dialog we just opened.
+        document.addEventListener('click', (e) => {
+            if (!dialogScrim.classList.contains('active')) return;
+            if (e.target.closest('#shortcut-dialog')) return;
+            if (e.target.closest('#add-shortcut-btn, .shortcut-edit')) return;
+            closeDialog();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && dialogScrim.classList.contains('active')) closeDialog();
+            if (e.key === 'Enter' && dialogScrim.classList.contains('active')) saveShortcutFromDialog();
+            // Don't steal arrow keys when a real text field is focused or when
+            // the dialog is active (the dialog has its own arrow semantics).
+            if (dialogScrim.classList.contains('active')) return;
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+            const cards = Array.from(shortcutsGrid.querySelectorAll('.shortcut-card'));
+            if (cards.length < 2) return;
+
+            // Approximate the grid columns by looking at the top offset of each
+            // card. Cards in the same row share a top (within a tolerance); cards
+            // in a new row have a strictly larger top. This is robust against the
+            // auto-fill grid sizing — it doesn't depend on knowing the column
+            // count in advance. Tolerance: half a typical row height, so a few
+            // px of sub-pixel jitter or grid gap miscount doesn't split rows.
+            const tops = cards.map(c => c.getBoundingClientRect().top);
+            const rowTol = Math.max(8, (cards[0].getBoundingClientRect().height || 100) * 0.4);
+            const colsByRow = (() => {
+                const counts = [];
+                let rowTop = tops[0];
+                let count = 0;
+                for (const t of tops) {
+                    if (Math.abs(t - rowTop) < rowTol) { count++; }
+                    else { counts.push(count); rowTop = t; count = 1; }
+                }
+                counts.push(count);
+                return counts;
+            })();
+            // Build a flat (row, col, idx) lookup for each card so arrow keys
+            // can move in 2D (Up/Down traverse rows in the same column,
+            // Left/Right traverse columns in the same row). colsByRow gives
+            // the column count per row; cumulative offsets give us each
+            // card's (row, col) by index.
+            const cardPositions = (() => {
+                const positions = [];
+                let i = 0;
+                for (let r = 0; r < colsByRow.length; r++) {
+                    for (let c = 0; c < colsByRow[r]; c++) {
+                        if (i >= cards.length) break;
+                        positions.push({ row: r, col: c, idx: i });
+                        i++;
+                    }
+                }
+                return positions;
+            })();
+            const currentPos = cardPositions.find(p =>
+                cards[p.idx] === document.activeElement || cards[p.idx].contains(document.activeElement)
+            );
+
+            let target = -1;
+            if (e.key === 'Home') {
+                target = 0;
+            } else if (e.key === 'End') {
+                target = cards.length - 1;
+            } else if (!currentPos) {
+                // Nothing focused yet — any arrow key focuses the first card so
+                // the user can start navigating from scratch.
+                target = 0;
+            } else if (e.key === 'ArrowLeft') {
+                if (currentPos.col === 0) return;
+                target = cardPositions.find(p => p.row === currentPos.row && p.col === currentPos.col - 1)?.idx ?? -1;
+            } else if (e.key === 'ArrowRight') {
+                if (currentPos.col >= colsByRow[currentPos.row] - 1) return;
+                target = cardPositions.find(p => p.row === currentPos.row && p.col === currentPos.col + 1)?.idx ?? -1;
+            } else if (e.key === 'ArrowUp') {
+                if (currentPos.row === 0) return;
+                // Move up one row, clamped to the last column of the row above
+                // if the current column would be out of range.
+                const prevRow = currentPos.row - 1;
+                const prevRowCols = colsByRow[prevRow];
+                const newCol = Math.min(currentPos.col, prevRowCols - 1);
+                target = cardPositions.find(p => p.row === prevRow && p.col === newCol)?.idx ?? -1;
+            } else if (e.key === 'ArrowDown') {
+                if (currentPos.row >= colsByRow.length - 1) return;
+                // Move down one row, clamped to the last column of the row below
+                // if the current column would be out of range.
+                const nextRow = currentPos.row + 1;
+                const nextRowCols = colsByRow[nextRow];
+                const newCol = Math.min(currentPos.col, nextRowCols - 1);
+                target = cardPositions.find(p => p.row === nextRow && p.col === newCol)?.idx ?? -1;
+            } else return;
+
+            e.preventDefault();
+            if (target >= 0 && cards[target]) cards[target].focus();
+        });
+
+        const shortcutsGrid = document.getElementById('shortcuts-grid');
+        function renderShortcuts() {
+            const list = getShortcuts();
+            // 只显示前 8 个快捷方式（首屏可见）
+            const shown = list.slice(0, 8);
+            let html = '';
+            const addLabel = window.i18n ? window.i18n.t('addShortcut') : 'Add Shortcut';
+            html += `<div class="shortcut-card shortcut-add" id="add-shortcut-btn" tabindex="0" role="button"><div class="add-icon">➕</div><div class="add-label">${addLabel}</div></div>`;
+            shown.forEach((s, i) => {
+                const addedAt = s.addedAt ? new Date(s.addedAt).toLocaleString() : '';
+                const timeStr = addedAt ? `<div class="detail-time">${addedAt}</div>` : '';
+                html += `
+                    <div class="shortcut-card" data-url="${s.url}" data-index="${i}" tabindex="0" role="button">
+                        <button class="shortcut-edit" data-index="${i}" data-tooltip="${window.i18n ? window.i18n.t('edit') : 'Edit'}">✏️</button>
+                        <button class="shortcut-remove" data-index="${i}" data-tooltip="${window.i18n ? window.i18n.t('remove') : 'Remove'}">✕</button>
+                        <div class="shortcut-icon">${s.icon}</div>
+                        <div class="shortcut-title">${s.title}</div>
+                        <div class="shortcut-details">
+                            <div class="detail-title">${s.title}</div>
+                            <div class="detail-url">${s.url}</div>
+                            ${timeStr}
+                       </div>
+                   </div>`;
+            });
+            shortcutsGrid.innerHTML = html;
+            shortcutsGrid.querySelectorAll('.shortcut-card:not(.shortcut-add)').forEach(card => {
+                card.addEventListener('click', (e) => {
+                    if (e.target.closest('.shortcut-edit') || e.target.closest('.shortcut-remove')) return;
+                    navigate(card.dataset.url);
+                });
+                card.addEventListener('keydown', (e) => {
+                    // Enter on a focused card = navigate (same as click).
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        card.click();
+                    }
+                });
+            });
+            const addBtn = shortcutsGrid.querySelector('#add-shortcut-btn');
+            if (addBtn) {
+                addBtn.addEventListener('click', () => openDialog(null));
+                addBtn.addEventListener('touchend', (e) => { e.preventDefault(); openDialog(null); });
+                addBtn.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        addBtn.click();
+                    }
+                });
+            }
+            shortcutsGrid.querySelectorAll('.shortcut-edit').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const idx = parseInt(btn.dataset.index, 10);
+                    const list = getShortcuts();
+                    if (list[idx]) openDialog(list[idx]);
+                });
+            });
+            shortcutsGrid.querySelectorAll('.shortcut-remove').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const idx = parseInt(btn.dataset.index, 10);
+                    const list = getShortcuts().filter((_, i) => i !== idx);
+                    saveShortcuts(list);
+                    renderShortcuts();
+                });
+            });
+            if (window.i18n && typeof window.i18n.apply === 'function') window.i18n.apply();
+        }
+        renderShortcuts();
+
+        // ============================================================
+        //  SUGGESTIONS ENGINE - INFINITE SCROLL (改进版)
+        // ============================================================
+
+        // 全局状态
+        const PAGE_SIZE = 12;
+        let currentPage = 0;              // 已加载到第几页（从0开始）
+        let isLoading = false;
+        let hasMore = true;
+        let totalSuggestionsCount = 0;    // 推荐总数（通过计算域名数量获得）
+
+        // ---------- 1. 计算所有域名的分数（同之前） ----------
+        function computeDomainScore(domain, history, bookmarks) {
+            const now = Date.now();
+            let visits = 0;
+            let lastVisit = 0;
+            let isBookmarked = false;
+            let bestTitle = '';
+
+            for (const h of history) {
+                if (!h.url) continue;
+                try {
+                    const urlObj = new URL(h.url);
+                    const host = urlObj.hostname;
+                    if (host === domain) {
+                        visits++;
+                        if (h.visitedAt > lastVisit) lastVisit = h.visitedAt;
+                        if (h.title && h.title.trim() && !bestTitle) bestTitle = h.title;
+                    }
+                } catch (_) {}
+            }
+            for (const b of bookmarks) {
+                if (!b.url) continue;
+                try {
+                    const urlObj = new URL(b.url);
+                    const host = urlObj.hostname;
+                    if (host === domain) {
+                        isBookmarked = true;
+                        if (b.title && b.title.trim() && !bestTitle) bestTitle = b.title;
+                    }
+                } catch (_) {}
+            }
+
+            let score = visits * 10;
+            if (isBookmarked) score += 50;
+            if (lastVisit > 0) {
+                const days = (now - lastVisit) / 86400000;
+                if (days < 7) score += 100;
+                else if (days < 30) score += 50;
+                else if (days < 90) score += 20;
+            }
+            return { score, bestTitle, lastVisit, visits };
+        }
+
+        // ---------- 2. 计算全部推荐（返回排序后的完整数组） ----------
+        function computeAllSuggestions() {
+            let history = [];
+            let bookmarks = [];
+            try {
+                const rawHist = JSON.parse(localStorage.getItem('ffHistory') || '[]');
+                if (Array.isArray(rawHist)) {
+                    if (rawHist.length > 0 && typeof rawHist[0] === 'string') {
+                        history = rawHist.map((url, i) => ({ url, title: url, visitedAt: Date.now() - i * 60000 }));
+                    } else {
+                        history = rawHist.filter(e => e && typeof e.url === 'string');
+                    }
+                }
+                const rawBm = JSON.parse(localStorage.getItem('ffBookmarks') || '[]');
+                if (Array.isArray(rawBm)) bookmarks = rawBm.filter(b => b && typeof b.url === 'string');
+            } catch (_) {}
+
+            const domainMap = new Map();
+            const allUrls = [...history.map(h => h.url), ...bookmarks.map(b => b.url)];
+            for (const url of allUrls) {
+                if (!url) continue;
+                try {
+                    const u = new URL(url);
+                    const host = u.hostname;
+                    if (!host) continue;
+                    const key = host.replace(/^www\./, '');
+                    if (!domainMap.has(key)) {
+                        const { score, bestTitle, lastVisit, visits } = computeDomainScore(key, history, bookmarks);
+                        domainMap.set(key, { score, title: bestTitle || key, lastVisit, visits });
+                    }
+                } catch (_) {}
+            }
+
+            const entries = Array.from(domainMap.entries())
+                .map(([domain, data]) => ({ domain, ...data }))
+                .sort((a, b) => b.score - a.score);
+
+            return entries;
+        }
+
+        // ---------- 3. 加载下一页 ----------
+        async function loadMoreSuggestions() {
+            if (isLoading || !hasMore) return;
+            isLoading = true;
+            const trigger = document.getElementById('load-more-trigger');
+            trigger.classList.remove('done');
+            trigger.querySelector('.spinner').style.display = 'block';
+            trigger.querySelector('span').textContent = window.i18n ? window.i18n.t('loading') : 'Loading…';
+
+            // 模拟延迟（让用户感受到加载过程）
+            await new Promise(resolve => setTimeout(resolve, 300));
+
+            // 每次加载重新计算所有建议（但只取当前页）
+            const all = computeAllSuggestions(); // 这里每次都会重新计算，但不持久存储
+            totalSuggestionsCount = all.length;
+            if (totalSuggestionsCount === 0) {
+                hasMore = false;
+                trigger.classList.add('done');
+                trigger.querySelector('.spinner').style.display = 'none';
+                trigger.querySelector('span').textContent = window.i18n ? window.i18n.t('noMoreSuggestions') : 'No more suggestions';
+                isLoading = false;
+                // 显示空状态
+                const grid = document.getElementById('suggestions-grid');
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">💡</div>
+                        <div class="empty-text">${window.i18n ? window.i18n.t('noSuggestions') : '暂无推荐，请访问更多网站'}</div>
+                    </div>
+                `;
+                trigger.style.display = 'none';
+                // 滚动到顶部
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                return;
+            }
+
+            const start = currentPage * PAGE_SIZE;
+            const end = start + PAGE_SIZE;
+            const pageData = all.slice(start, end);
+            if (pageData.length === 0) {
+                hasMore = false;
+                trigger.classList.add('done');
+                trigger.querySelector('.spinner').style.display = 'none';
+                trigger.querySelector('span').textContent = window.i18n ? window.i18n.t('noMoreSuggestions') : 'No more suggestions';
+                isLoading = false;
+                return;
+            }
+
+            // 渲染这批卡片
+            const grid = document.getElementById('suggestions-grid');
+            const fragment = document.createDocumentFragment();
+            for (const s of pageData) {
+                const card = createSuggestionCard(s);
+                fragment.appendChild(card);
+            }
+            grid.appendChild(fragment);
+
+            // 更新页码
+            currentPage++;
+            isLoading = false;
+
+            // 检查是否还有更多
+            if (currentPage * PAGE_SIZE >= totalSuggestionsCount) {
+                hasMore = false;
+                trigger.classList.add('done');
+                trigger.querySelector('.spinner').style.display = 'none';
+                trigger.querySelector('span').textContent = window.i18n ? window.i18n.t('noMoreSuggestions') : 'No more suggestions';
+                // 所有建议加载完毕，显示返回顶部按钮
+                showBackToTop(true);
+            } else {
+                // 重置触发状态
+                trigger.querySelector('.spinner').style.display = 'block';
+                trigger.querySelector('span').textContent = window.i18n ? window.i18n.t('loading') : 'Loading…';
+            }
+        }
+
+        // ---------- 4. 创建单个建议卡片 DOM（带异步数据填充） ----------
+        function createSuggestionCard(s) {
+            const card = document.createElement('div');
+            card.className = 'suggestion-card loading';
+            card.dataset.domain = s.domain;
+            card.dataset.visits = s.visits || 0;
+            card.dataset.lastvisit = s.lastVisit || 0;
+
+            // 静态结构（占位）
+            card.innerHTML = `
+                <div class="suggestion-thumb"><div class="fallback-icon">⏳</div></div>
+                <div class="suggestion-info">
+                    <div class="suggestion-title">${s.title}</div>
+                    <div class="suggestion-url">${s.domain}</div>
+                    <div class="suggestion-meta">
+                        <span class="rank">🌐 #?</span>
+                        <span class="category">⟐ ?</span>
+                    </div>
+                </div>
+                <div class="suggestion-details">
+                    <div class="detail-title">${s.title}</div>
+                    <div class="detail-domain">${s.domain}</div>
+                    <div class="detail-stats">
+                        <span>📊 ${s.visits || 0} visits</span>
+                        <span>⏱ ${s.lastVisit ? new Date(s.lastVisit).toLocaleDateString() : 'Never'}</span>
+                    </div>
+                </div>
+            `;
+
+            // 点击导航
+            card.addEventListener('click', () => {
+                const url = 'https://' + s.domain;
+                navigate(url);
+            });
+
+            // 异步填充缩略图和排名信息（不阻塞渲染）
+            (async function enrich(card, s) {
+                const domain = s.domain;
+                const url = 'https://' + domain;
+
+                // 尝试获取标题（如果已有 title 则跳过）
+                let title = s.title;
+                if (!title || title === domain) {
+                    try {
+                        const ddgTitle = await fetchTitleFromDDG(domain);
+                        if (ddgTitle) title = ddgTitle;
+                    } catch (_) {}
+                }
+
+                // 缩略图
+                let thumbUrl = null;
+                try {
+                    thumbUrl = await fetchScreenshot(url);
+                } catch (_) {}
+
+                // 排名和分类（模拟）
+                const { rank, category } = getMockRankAndCategory(domain);
+
+                // 更新 DOM
+                const thumbDiv = card.querySelector('.suggestion-thumb');
+                if (thumbUrl) {
+                    thumbDiv.innerHTML = `<img src="${thumbUrl}" alt="${title}" loading="lazy" />`;
+                } else {
+                    const fav = faviconUrl(domain);
+                    thumbDiv.innerHTML = `<img src="${fav}" alt="${title}" style="width:64px;height:64px;object-fit:contain;" />`;
+                }
+
+                const titleEl = card.querySelector('.suggestion-title');
+                titleEl.textContent = title;
+
+                const rankEl = card.querySelector('.rank');
+                rankEl.textContent = `🌐 #${rank.toLocaleString()}`;
+
+                const catEl = card.querySelector('.category');
+                catEl.textContent = `⟐ ${category}`;
+
+                // 更新详情
+                const detailTitle = card.querySelector('.suggestion-details .detail-title');
+                detailTitle.textContent = title;
+                const stats = card.querySelector('.suggestion-details .detail-stats');
+                stats.innerHTML = `
+                    <span>📊 ${s.visits || 0} visits</span>
+                    <span>⏱ ${s.lastVisit ? new Date(s.lastVisit).toLocaleDateString() : 'Never'}</span>
+                `;
+
+                card.classList.remove('loading');
+            })(card, s);
+
+            return card;
+        }
+
+        // ---------- 5. 返回顶部按钮控制 ----------
+        function showBackToTop(show) {
+            const btn = document.getElementById('back-to-top');
+            if (show) {
+                btn.classList.add('visible');
+            } else {
+                btn.classList.remove('visible');
+            }
+        }
+
+        // 点击返回顶部
+        document.getElementById('back-to-top').addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            // 点击后隐藏按钮（可选）
+            showBackToTop(false);
+        });
+
+        // 监听滚动，当滚动到顶部时隐藏返回顶部按钮（可选）
+        window.addEventListener('scroll', () => {
+            const btn = document.getElementById('back-to-top');
+            if (btn.classList.contains('visible')) {
+                // 如果用户滚动到顶部附近（比如 < 200px），可以隐藏按钮
+                if (window.scrollY < 200) {
+                    btn.classList.remove('visible');
+                }
+            }
+        }, { passive: true });
+
+        // ---------- 6. 初始化无限滚动 ----------
+        function initInfiniteScroll() {
+            // 先清空网格
+            const grid = document.getElementById('suggestions-grid');
+            grid.innerHTML = '';
+            const trigger = document.getElementById('load-more-trigger');
+            trigger.style.display = 'flex';
+            trigger.classList.remove('done');
+            trigger.querySelector('.spinner').style.display = 'block';
+            trigger.querySelector('span').textContent = window.i18n ? window.i18n.t('loading') : 'Loading…';
+
+            // 重置状态
+            currentPage = 0;
+            isLoading = false;
+            hasMore = true;
+            totalSuggestionsCount = 0;
+            showBackToTop(false); // 初始隐藏返回按钮
+
+            // 加载第一页
+            loadMoreSuggestions();
+
+            // 设置 IntersectionObserver 监听触发元素
+            const observer = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting) {
+                    loadMoreSuggestions();
+                }
+            }, { rootMargin: '100px' });
+
+            observer.observe(trigger);
+        }
+
+        // ---------- 7. 外部数据获取函数（保持不变） ----------
+        async function fetchScreenshot(url) {
+            try {
+                const proxy = 'https://api.allorigins.win/raw?url=';
+                const apiUrl = `https://www.googleapis.com/pagespeedonline/v1/runPagespeed?screenshot=true&url=${encodeURIComponent(url)}`;
+                const resp = await fetch(proxy + encodeURIComponent(apiUrl));
+                if (!resp.ok) throw new Error('PageSpeed API failed');
+                const data = await resp.json();
+                if (data.screenshot && data.screenshot.data) {
+                    return 'data:image/jpeg;base64,' + data.screenshot.data;
+                }
+                return null;
+            } catch (_) {
+                return null;
+            }
+        }
+
+        const MOCK_RANKINGS = {
+            'google.com': { rank: 1, category: 'Search' },
+            'youtube.com': { rank: 2, category: 'Video' },
+            'facebook.com': { rank: 3, category: 'Social' },
+            'twitter.com': { rank: 4, category: 'Social' },
+            'instagram.com': { rank: 5, category: 'Social' },
+            'wikipedia.org': { rank: 6, category: 'Reference' },
+            'amazon.com': { rank: 7, category: 'Shopping' },
+            'reddit.com': { rank: 8, category: 'Social' },
+            'netflix.com': { rank: 9, category: 'Entertainment' },
+            'linkedin.com': { rank: 10, category: 'Professional' },
+            'github.com': { rank: 11, category: 'Development' },
+            'stackoverflow.com': { rank: 12, category: 'Development' },
+            'yahoo.com': { rank: 13, category: 'News' },
+            'bing.com': { rank: 14, category: 'Search' },
+            'apple.com': { rank: 15, category: 'Technology' },
+        };
+        const DEFAULT_CATEGORY = 'Website';
+        const DEFAULT_RANK = 99999;
+
+        function getMockRankAndCategory(domain) {
+            const key = domain.replace(/^www\./, '');
+            const info = MOCK_RANKINGS[key];
+            if (info) return info;
+            const categories = ['Technology', 'News', 'Entertainment', 'Education', 'Business', 'Health', 'Sports'];
+            return {
+                rank: Math.floor(Math.random() * 90000) + 1000,
+                category: categories[Math.floor(Math.random() * categories.length)]
+            };
+        }
+
+        async function fetchTitleFromDDG(domain) {
+            try {
+                const proxy = 'https://api.allorigins.win/raw?url=';
+                const url = `https://api.duckduckgo.com/?q=${encodeURIComponent(domain)}&format=json&t=pwaos`;
+                const resp = await fetch(proxy + encodeURIComponent(url));
+                if (!resp.ok) throw new Error('DDG failed');
+                const data = await resp.json();
+                if (data.Heading && data.Heading.trim()) return data.Heading;
+                if (data.Abstract && data.Abstract.trim()) {
+                    const parts = data.Abstract.split('.');
+                    if (parts.length > 0) return parts[0].trim();
+                }
+                return null;
+            } catch (_) {
+                return null;
+            }
+        }
+
+        function faviconUrl(host) {
+            const _isCN = () => {
+                try {
+                    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                    return /^Asia\/Shanghai$|^Asia\/Hong_Kong$|^Asia\/Beijing$|^Asia\/Chongqing$|^Asia\/Harbin$|^Asia\/Kashgar$/i.test(tz);
+                } catch { return false; }
+            };
+            const base = _isCN() ? 'https://favicon.im' : 'https://logo.clearbit.com';
+            return `${base}/${encodeURIComponent(host)}`;
+        }
+
+        // ============================================================
+        //  Navigation & other helpers
+        // ============================================================
+        function navigate(url) {
+            var rect = new pwaos.Rect({
+              x: window.screenX,
+              y: window.screenY,
+              width: document.documentElement.innerWidth,
+              height: document.documentElement.innerHeight,
+            });
+            pwaos_.appManager.launchApp(pwaos.AppType.kEmbedContents, url, rect, null, null).then(function(value) {
+                if (!value?.app?.id || !value?.app?.guestInstanceId){
+                    return undefined;
+                }
+            });
+        }
+
+        function getSearchEngine() {
+            const SEARCH_ENGINES = {
+                google: { baseUrl: 'https://www.google.com/search?q=' },
+                bing:   { baseUrl: 'https://www.bing.com/search?q=' },
+                duckduckgo: { baseUrl: 'https://duckduckgo.com/?q=' },
+                baidu:  { baseUrl: 'https://www.baidu.com/s?wd=' },
+                yandex: { baseUrl: 'https://yandex.com/search/?text=' },
+            };
+            const key = localStorage.getItem('ffSearchEngine') || 'google';
+            return SEARCH_ENGINES[key] || SEARCH_ENGINES.google;
+        }
+
+        function handleSearchInputSearchEngine() {
+            // Update placeholder in url-input
+            const engineName = localStorage.getItem('ffSearchEngine') || 'google';
+            const urlInput = document.getElementById('search-input');
+            if (urlInput) {
+                urlInput.placeholder = i18n.t('searchOrUrl').replace('{engine}', engineName);
+            }
+        }
+
+        document.getElementById('search-input').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const input = e.target.value.trim();
+                if (input) {
+                    let url = input;
+                    if (!/^https?:\/\//i.test(input)) {
+                        if (/^[^ ]+\.[^ ]+/.test(input)) {
+                            url = 'https://' + input;
+                        } else {
+                            const engine = getSearchEngine();
+                            url = engine.baseUrl + encodeURIComponent(input);
+                        }
+                    }
+                    navigate(url);
+                }
+            }
+        });
+
+        // ---- Initial load ----
+        renderShortcuts();
+        initInfiniteScroll(); // 初始化无限滚动
+
+        if (window.requestService) {
+            use_pwaos = true;
+            window.requestService('pwaos.runtime').then(success => {
+                if (success) {
+                    pwaos_ = pwaos.runtime;
+                    console.log("PwaOS version: " + pwaos_.kVersion);
+                    pwaos_.init().then(pwaos_onLoad);
+                }
+            }).catch(err => console.log("Failed to requestService: " + err));
+        }
+    </script>
+</body>
+</html>

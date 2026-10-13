@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0f0f12">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title data-i18n="crashedTitle">页面崩溃</title>
+    <script defer src="i18n.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        :root {
+            --bg-primary: #0f0f12;
+            --bg-secondary: #1a1a1f;
+            --bg-tertiary: #242429;
+            --accent-primary: #ff6b35;
+            --accent-secondary: #ff8c5a;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-tertiary: rgba(255, 255, 255, 0.5);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --radius-lg: clamp(14px, 1.6vw, 20px);
+            --radius-md: clamp(10px, 1.2vw, 14px);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+            --font-mono: "SF Mono", "Cascadia Code", "DejaVu Sans Mono", "Ubuntu Mono", "Consolas", monospace;
+        }
+        :root[data-theme="light"] {
+            --bg-primary: #f5f5f7;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #ebebed;
+            --text-primary: #1d1d1f;
+            --text-secondary: rgba(0, 0, 0, 0.6);
+            --text-tertiary: rgba(0, 0, 0, 0.4);
+            --border-subtle: rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+        }
+        :root { color-scheme: dark; }
+        :root[data-theme="light"] { color-scheme: light; }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .crash-container {
+            max-width: 560px;
+            width: 100%;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 32px 28px;
+            box-shadow: var(--shadow-lg);
+            animation: cardIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        @keyframes cardIn {
+            from { opacity: 0; transform: scale(0.96) translateY(12px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .crash-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .crash-icon {
+            font-size: 48px;
+            line-height: 1;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+        .crash-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .crash-message {
+            font-size: 15px;
+            color: var(--text-secondary);
+            margin: 8px 0 16px;
+            line-height: 1.6;
+        }
+
+        .crash-details-box {
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 12px 0 16px;
+            border-left: 3px solid var(--accent-primary);
+        }
+        .crash-detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            font-size: 13px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .crash-detail-item:last-child {
+            border-bottom: none;
+        }
+        .crash-detail-label {
+            color: var(--text-tertiary);
+            font-weight: 500;
+        }
+        .crash-detail-value {
+            color: var(--text-primary);
+            font-family: var(--font-mono);
+            word-break: break-all;
+            text-align: right;
+            max-width: 60%;
+        }
+
+        .crash-suggestions {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin: 16px 0 20px;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            border-left: 3px solid var(--accent-primary);
+        }
+        .crash-suggestions strong {
+            color: var(--text-primary);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-decoration: none;
+            flex: 1 0 auto;
+            min-width: 80px;
+        }
+        .btn:hover {
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+        }
+        .btn:active {
+            transform: scale(0.97);
+        }
+        .btn-primary {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background: var(--accent-secondary);
+            border-color: var(--accent-secondary);
+            color: #fff;
+        }
+        .btn-icon {
+            font-size: 16px;
+        }
+
+        .crash-footer {
+            margin-top: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: var(--text-tertiary);
+            border-top: 1px solid var(--border-subtle);
+            padding-top: 16px;
+        }
+        .crash-footer a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.15s;
+        }
+        .crash-footer a:hover {
+            color: var(--accent-primary);
+        }
+
+        @media (max-width: 480px) {
+            .crash-container {
+                padding: 24px 18px;
+            }
+            .crash-title {
+                font-size: 19px;
+            }
+            .btn {
+                flex: 1 1 100%;
+            }
+            .btn-group {
+                flex-direction: column;
+            }
+            .crash-footer {
+                flex-direction: column;
+                gap: 6px;
+                align-items: flex-start;
+            }
+            .crash-detail-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 2px;
+            }
+            .crash-detail-value {
+                text-align: left;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="crash-container" role="status" aria-live="polite">
+        <!-- 头部 -->
+        <div class="crash-header">
+            <div class="crash-icon">💥</div>
+            <h1 class="crash-title" data-i18n="crashedTitle">页面崩溃</h1>
+        </div>
+
+        <!-- 主消息 -->
+        <p class="crash-message" id="crash-message" data-i18n="crashedMessage">渲染进程已终止。可能是内存不足、代码错误或扩展冲突导致。</p>
+
+        <!-- 崩溃详情 -->
+        <div class="crash-details-box" id="crash-details">
+            <!-- 由 JS 动态填充 -->
+        </div>
+
+        <!-- 建议信息 -->
+        <div class="crash-suggestions">
+            <strong data-i18n="crashSuggestionsTitle">建议：</strong>
+            <span data-i18n="crashSuggestionsText">尝试重新加载页面。如果问题持续，请检查浏览器扩展或报告问题。</span>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="btn-group">
+            <button class="btn btn-primary" id="reload-btn">
+                <span class="btn-icon">⟳</span>
+                <span data-i18n="reloadPage">重新加载页面</span>
+            </button>
+            <button class="btn" id="new-tab-btn">
+                <span class="btn-icon">➕</span>
+                <span data-i18n="openNewTab">打开新标签页</span>
+            </button>
+            <button class="btn" id="report-btn">
+                <span class="btn-icon">📤</span>
+                <span data-i18n="reportIssue">报告问题</span>
+            </button>
+            <button class="btn" id="copy-btn">
+                <span class="btn-icon">📋</span>
+                <span data-i18n="copyCrashDetails">复制崩溃详情</span>
+            </button>
+        </div>
+
+        <!-- 底部 -->
+        <div class="crash-footer">
+            <span data-i18n="crashFooter">如果经常遇到此问题，请检查扩展或硬件资源。</span>
+            <a href="about:memory" data-i18n="viewMemory">查看内存</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            window.i18n.init();
+        });
+
+        let pwaos_ = null;
+        let app_id = null;
+        function pwaos_onLoad() {
+            let urlObj = new URL(window.location.href , document.baseURI);
+            app_id = urlObj.searchParams.get('app_id') || '';
+        }
+
+        // ============================================================
+        //  主题同步（参照 newtab.html）
+        // ============================================================
+        function applyTheme(value) {
+            const v = value === 'light' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', v);
+            const meta = document.querySelector('meta[name="theme-color"]');
+            if (meta) meta.setAttribute('content', v === 'light' ? '#f5f5f7' : '#0f0f12');
+        }
+
+        function applyLanguage(lang) {
+            if (window.i18n && typeof window.i18n.setLanguage === 'function') {
+                window.i18n.setLanguage(lang);
+            }
+        }
+
+        (function initThemeFromURL() {
+            const params = new URLSearchParams(location.search);
+            const theme = params.get('theme');
+            if (theme) applyTheme(theme);
+        })();
+
+        // 监听 localStorage 变化（如果主题在另一个标签页更改）
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'data-theme' || e.key === 'ffTheme') {
+                const newTheme = e.newValue;
+                if (newTheme) applyTheme(newTheme);
+            }
+            else if (e.key === 'ui_language' && window.i18n) {
+                applyLanguage(e.newValue);
+            }
+        });
+
+        // ============================================================
+        //  原有的崩溃处理逻辑
+        // ============================================================
+        (function() {
+            const params = new URLSearchParams(window.location.search);
+            const reason = params.get('reason') || '';
+            const url = params.get('url') || '';
+            const code = params.get('code') || '';
+            const memory = params.get('memory') || '';
+
+            if (window.i18n) {
+                window.i18n.apply?.();
+            }
+
+            const detailsBox = document.getElementById('crash-details');
+            const messageEl = document.getElementById('crash-message');
+
+            let detailHtml = '';
+            if (reason) {
+                detailHtml += `<div class="crash-detail-item">
+                    <span class="crash-detail-label" data-i18n="crashReasonLabel">原因</span>
+                    <span class="crash-detail-value">${escapeHtml(reason)}</span>
+                </div>`;
+            }
+            if (url) {
+                detailHtml += `<div class="crash-detail-item">
+                    <span class="crash-detail-label" data-i18n="crashUrlLabel">URL</span>
+                    <span class="crash-detail-value">${escapeHtml(url)}</span>
+                </div>`;
+            }
+            if (code) {
+                detailHtml += `<div class="crash-detail-item">
+                    <span class="crash-detail-label" data-i18n="crashExitCodeLabel">退出代码</span>
+                    <span class="crash-detail-value">${escapeHtml(code)}</span>
+                </div>`;
+            }
+            if (memory) {
+                detailHtml += `<div class="crash-detail-item">
+                    <span class="crash-detail-label" data-i18n="crashMemoryLabel">内存</span>
+                    <span class="crash-detail-value">${escapeHtml(memory)}</span>
+                </div>`;
+            }
+            const ua = navigator.userAgent;
+            const timestamp = new Date().toISOString();
+            detailHtml += `<div class="crash-detail-item">
+                <span class="crash-detail-label" data-i18n="crashUserAgentLabel">User Agent</span>
+                <span class="crash-detail-value" style="font-size:11px;">${escapeHtml(ua)}</span>
+            </div>`;
+            detailHtml += `<div class="crash-detail-item">
+                <span class="crash-detail-label" data-i18n="crashTimestampLabel">时间戳</span>
+                <span class="crash-detail-value">${escapeHtml(timestamp)}</span>
+            </div>`;
+
+            if (detailHtml) {
+                detailsBox.innerHTML = detailHtml;
+            } else {
+                detailsBox.innerHTML = `<div class="crash-detail-item"><span class="crash-detail-label" data-i18n="crashNoDetails">暂无详细信息</span></div>`;
+            }
+
+            if (params.get('message')) {
+                messageEl.textContent = params.get('message');
+            }
+
+            document.getElementById('reload-btn').addEventListener('click', () => {
+                if (app_id) {
+                    pwaos_.appManager.getAppInfo(app_id).then(function(value) {
+                        if (value?.info.appId == app_id)
+                            pwaos_.appManager.reload(app_id);
+                    });
+                }
+            });
+
+            document.getElementById('new-tab-btn').addEventListener('click', () => {
+                var rect = new pwaos.Rect({
+                  x: window.screenX,
+                  y: window.screenY,
+                  width: document.documentElement.innerWidth,
+                  height: document.documentElement.innerHeight,
+                });
+                pwaos_.appManager.launchApp(pwaos.AppType.kEmbedContents, "about::blank", rect, null, null).then(function(value) {
+                    if (!value?.app?.id || !value?.app?.guestInstanceId){
+                        return undefined;
+                    }
+                });
+            });
+
+            document.getElementById('report-btn').addEventListener('click', () => {
+                const body = encodeURIComponent(
+                    `**Reason:** ${reason}\n` +
+                    `**URL:** ${url}\n` +
+                    `**Exit Code:** ${code}\n` +
+                    `**Memory:** ${memory}\n` +
+                    `**User Agent:** ${navigator.userAgent}\n` +
+                    `**Timestamp:** ${new Date().toISOString()}`
+                );
+                window.open(`https://github.com/pwaos/browser/issues/new?title=Crash%20Report&body=${body}`, '_blank');
+            });
+
+            document.getElementById('copy-btn').addEventListener('click', () => {
+                const lines = [
+                    `Reason: ${reason || '—'}`,
+                    `URL: ${url || '—'}`,
+                    `Exit Code: ${code || '—'}`,
+                    `Memory: ${memory || '—'}`,
+                    `User Agent: ${navigator.userAgent}`,
+                    `Timestamp: ${new Date().toISOString()}`
+                ];
+                const text = lines.join('\n');
+                navigator.clipboard.writeText(text).then(() => {
+                    if (window.showToast) {
+                        window.showToast(i18n.t('copied') || '已复制', 'success', 1500);
+                    } else {
+                        alert(i18n.t('copied') || '已复制');
+                    }
+                }).catch(() => {
+                    alert(text);
+                });
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    document.getElementById('reload-btn').click();
+                } else if (e.key === 'Escape') {
+                    document.getElementById('new-tab-btn').click();
+                } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' ||
+                           e.key === 'ArrowRight' || e.key === 'ArrowDown' ||
+                           e.key === 'Home' || e.key === 'End') {
+                    // Cycle focus through the action buttons when no input is focused.
+                    // Keeps the page usable without a mouse — same pattern Firefox uses
+                    // for its error pages and the tab strip.
+                    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+                    const order = ['reload-btn', 'new-tab-btn', 'report-btn', 'copy-btn'];
+                    const visible = order
+                        .map(id => document.getElementById(id))
+                        .filter(el => el && !el.hidden && getComputedStyle(el).display !== 'none');
+                    if (visible.length < 2) return;
+                    const currentId = document.activeElement?.id;
+                    let idx = visible.findIndex(el => el.id === currentId);
+                    e.preventDefault();
+                    if (idx === -1) {
+                        visible[0].focus();
+                        return;
+                    }
+                    if (e.key === 'Home') {
+                        visible[0].focus();
+                    } else if (e.key === 'End') {
+                        visible[visible.length - 1].focus();
+                    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                        const prev = (idx - 1 + visible.length) % visible.length;
+                        visible[prev].focus();
+                    } else {
+                        const next = (idx + 1) % visible.length;
+                        visible[next].focus();
+                    }
+                }
+            });
+
+            function escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            if (window.requestService) {
+                use_pwaos = true;
+                window.requestService('pwaos.runtime').then(success => {
+                    if (success) {
+                        pwaos_ = pwaos.runtime;
+                        console.log("PwaOS version: " + pwaos_.kVersion);
+                        pwaos_.init().then(pwaos_onLoad);
+                    }
+                }).catch(err => console.log("Failed to requestService: " + err));
+            }
+        })();
+    </script>
+</body>
+</html>

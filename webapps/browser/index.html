@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="cache-control" content="no-cache" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="expires" content="0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0f0f12">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Browser">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="PwaOS Browser">
+    <meta name="description" content="Premium browser built with PwaOS SDK">
+    <title data-i18n='browserTitle'>浏览器</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23ff6b35'/><stop offset='100%' stop-color='%23ff8c5a'/></linearGradient></defs><circle cx='50' cy='50' r='45' fill='url(%23g)'/><path d='M50 20 L58 42 L82 42 L63 56 L70 78 L50 65 L30 78 L37 56 L18 42 L42 42 Z' fill='white'/></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><defs><linearGradient id='g' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23ff6b35'/><stop offset='100%' stop-color='%23ff8c5a'/></linearGradient></defs><rect width='180' height='180' rx='40' fill='url(%23g)'/><path d='M90 35 L102 74 L144 74 L114 100 L126 138 L90 112 L54 138 L66 100 L36 74 L78 74 Z' fill='white'/></svg>">
+    <link rel="stylesheet" href="styles.css">
+    <script src="storage.js"></script>
+    <script src="i18n.js" defer></script>
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <!-- App Menu -->
+    <div id="app-menu" class="glass-panel menu-panel">
+        <div class="menu-content">
+            <div class="menu-section">
+                <button class="menu-item" data-action="new-tab">
+                    <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                    <span data-i18n="newTab">新标签页</span>
+                    <span class="shortcut">⌘T</span>
+                </button>
+                <button class="menu-item" data-action="new-window">
+                    <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/></svg>
+                    <span data-i18n="newWindow">新建窗口</span>
+                    <span class="shortcut">⌘N</span>
+                </button>
+            </div>
+            <div class="menu-divider"></div>
+            <div class="menu-section">
+                <button class="menu-item" data-action="bookmarks">
+                    <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                    <span data-i18n="bookmarks">书签</span>
+                    <span class="shortcut">⌘⇧O</span>
+                </button>
+                <button class="menu-item" data-action="history">
+                    <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span data-i18n="history">历史记录</span>
+                    <span class="shortcut">⌘H</span>
+                </button>
+                <button class="menu-item" data-action="downloads">
+                    <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    <span data-i18n="downloads">下载内容</span>
+                    <span class="shortcut">⌘J</span>
+                </button>
+            </div>
+            <div class="menu-divider"></div>
+            <div class="menu-section">
+                <button class="menu-item" data-action="settings">
+                                <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                                <span data-i18n="settings">设置</span>
+                           </button>
+                            <button class="menu-item" data-action="developer">
+                                <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                                <span data-i18n="devTools">Web开发者工具</span>
+                                <span class="shortcut">⌘⌥I</span>
+                            </button>
+                        </div>
+                        <div class="menu-divider"></div>
+                        <div class="menu-section">
+                            <button class="menu-item" data-action="about">
+                                <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                                <span data-i18n="about">关于</span>
+                            </button>
+                            <button class="menu-item" data-action="quit">
+                    <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                    <span data-i18n="quit">退出</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page Info Panel (Ctrl+I) -->
+    <div id="page-info-panel" class="glass-panel page-info-panel" hidden>
+            <div class="settings-header">
+                <h3 data-i18n="pageInfo">页面信息</h3>
+                <button class="settings-close" data-i18n-title="close">×</button>
+            </div>
+            <div class="page-info-content" id="page-info-content"></div>
+        </div>
+
+    <!-- Search Engine Panel -->
+    <div id="search-engine-panel" class="glass-panel search-engine-panel" hidden>
+            <div class="settings-header">
+                <h3 data-i18n="selectSearchEngine">选择搜索引擎</h3>
+                <button class="settings-close" data-i18n-title="close">×</button>
+            </div>
+            <div class="sep-body"></div>
+        </div>
+
+    <!-- Suggestions URL Panel (opens while typing in URL bar) -->
+    <div id="suggestions-url-panel" class="glass-panel suggestions-url-panel" hidden>
+        <div class="suggestions-url-content" id="suggestions-url-content"></div>
+    </div>
+
+
+    <!-- Command Palette (Ctrl+Shift+P) -->
+    <div id="cmd-palette" class="glass-panel cmd-palette" hidden>
+        <div class="cmd-input-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" style="flex-shrink:0;opacity:0.5"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+            <input type="text" id="cmd-input" data-i18n-placeholder="enterCommand" placeholder="输入命令…" autocomplete="off">
+        </div>
+        <div class="cmd-results" id="cmd-results"></div>
+    </div>
+
+    <!-- Browser Container -->
+    <div class="browser-container" id="browser-container">
+
+        <!-- Tab Bar -->
+        <div class="tab-bar" id="tab-bar">
+            <div class="tab-strip" id="tab-strip">
+                <button class="tab-add" id="tab-add-btn" data-i18n-title="newTabTip">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </button>
+            </div>
+            </div>
+
+        <!-- Desktop Navigation -->
+        <div class="nav-bar desktop-nav" id="desktop-nav">
+            <div class="nav-group">
+                <button class="nav-btn" id="back-btn" data-i18n-title="back" disabled>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+                <button class="nav-btn" id="forward-btn" data-i18n-title="forward" disabled>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+                <button class="nav-btn" id="reload-btn" data-i18n-title="refresh">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                </button>
+                <button class="nav-btn" id="home-btn" data-i18n-title="home">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                </button>
+
+            </div>
+
+            <div class="url-bar" id="url-bar">
+                <button class="url-icon" id="url-icon" type="button"
+                        data-i18n-title="pageInfo" aria-label="Page Info" aria-haspopup="dialog">
+                    <span class="url-icon-glyph" id="url-icon-glyph">🌐</span>
+                    <span class="url-icon-favicon" id="url-icon-favicon" aria-hidden="true"/>
+                </button>
+                <input type="text" class="url-input" id="url-input"
+                       data-i18n-placeholder="searchOrUrl" placeholder="搜索或输入网址" autocomplete="off" spellcheck="false">
+                <button class="nav-btn icon-only" id="search-engine-btn" data-i18n-title="selectSearchEngine" aria-label="Select search engine">
+                    <span class="se-btn-icon"></span>
+                    <svg class="se-btn-arrow" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5H7z"/></svg>
+                </button>
+                <button class="star-btn" id="star-btn" data-i18n-title="addBookmark">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                </button>
+
+                <button class="nav-btn icon-only" id="theme-btn" data-i18n-title="switchTheme" aria-label="Toggle theme">🌙</button>
+                <div class="zoom-cluster" id="zoom-cluster" hidden>
+                    <button class="zoom-pill zoom-dec" id="zoom-dec" type="button" data-i18n-title="zoomOut" data-i18n-aria="zoomOut" aria-label="Zoom Out">−</button>
+                    <button class="zoom-pill zoom-pct" id="zoom-pct" type="button" data-i18n-title="zoomReset" data-i18n-aria="zoomReset" aria-label="Actual Size">100%</button>
+                    <button class="zoom-pill zoom-inc" id="zoom-inc" type="button" data-i18n-title="zoomIn" data-i18n-aria="zoomIn" aria-label="Zoom In">+</button>
+                </div>
+            </div>
+
+            <div class="nav-group">
+                <button class="nav-btn icon-only" id="library-btn" data-i18n-title="bookmarks2" data-i18n-aria="bookmarks" aria-label="Bookmarks">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                </button>
+                <button class="nav-btn icon-only" id="settings-btn" data-i18n-title="settings" data-i18n-aria="settings" aria-label="Settings">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                </button>
+                <button class="menu-btn" id="hamburger-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Bookmarks Bar - under the nav-bar as a single line.
+             Folder pills open #bookmarks-dropdown (multi-level). -->
+        <div class="bookmarks-bar" id="bookmarks-bar"></div>
+        <!-- Bookmarks folder dropdown - one shared panel anchored under a
+             bar-folder pill by updateBookmarksBar/toggleBookmarksDropdown.
+             Deeper levels become .bm-submenu panels appended to body. -->
+        <div id="bookmarks-dropdown" class="glass-panel bookmarks-dropdown"></div>
+
+        <!-- Content -->
+        <div class="content-area">
+            <!-- Sidebar -->
+            <div id="sidebar" class="glass-panel sidebar" hidden>
+                <div class="sidebar-header">
+                    <h3 id="sidebar-title" data-i18n="bookmarkBar">书签栏</h3>
+                    <button class="icon-btn" data-action="close-sidebar">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+                <div class="sidebar-toolbar">
+                    <button class="sidebar-tab active" data-view="bookmarks">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                        <span data-i18n="bookmarks2">书签</span>
+                    </button>
+                    <button class="sidebar-tab" data-view="history">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        <span data-i18n="history2">历史</span>
+                    </button>
+                    <button class="sidebar-tab" data-view="downloads">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        <span data-i18n="downloads2">下载</span>
+                    </button>
+                </div>
+                <div class="sidebar-search-bar">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="sidebar-search-icon"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <input type="text" id="sidebar-search-input" data-i18n-placeholder="searchBookmarksHistory" placeholder="搜索书签或历史记录…" autocomplete="off" spellcheck="false" />
+                </div>
+                <div class="sidebar-content" id="sidebar-content"></div>
+                <div class="sidebar-resizer" id="sidebar-resizer" hidden aria-label="调整侧边栏宽度"></div>
+            </div>
+
+            <my-webappgroup id="webappgroup"></my-webappgroup>
+        </div>
+
+        <!-- Find Bar (Ctrl+F) -->
+        <div class="find-bar" id="find-bar" hidden>
+            <input type="text" id="find-input" data-i18n-placeholder="findInPage" placeholder="页内查找"
+                   autocomplete="off" spellcheck="false" />
+            <span class="find-count" id="find-count"></span>
+            <button class="find-prev" id="find-prev" data-i18n-title="previousMatch" aria-label="Previous match">▲</button>
+            <button class="find-next" id="find-next" data-i18n-title="nextMatch" aria-label="Next match">▼</button>
+            <button class="find-close" id="find-close" data-i18n-title="closeFindBar" aria-label="Close find bar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+        </div>
+
+    <!-- Context Menu — populated dynamically by buildContextMenu() -->
+    <div id="context-menu" class="glass-panel context-menu"></div>
+
+
+    <!-- Toast container (used by showToast; previously defined implicitly
+         in styles.css but never wired up — declaring it here lets us skip
+         the runtime DOM creation on first call). -->
+    <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- ============================================================
+         Settings Panel — wired by Settings.toggle() in script.js.
+         Toggle source: #settings-btn in the nav-bar, or the
+         "Settings" entry in the command palette.
+         ============================================================ -->
+    <div id="settings-panel" class="settings-panel" hidden>
+        <div class="settings-header">
+            <h3 data-i18n="settings">设置</h3>
+            <button class="settings-close" data-i18n-title="close">×</button>
+        </div>
+        <div class="settings-body">
+            <!-- Sections are populated by JS so order is data-driven. -->
+        </div>
+        <div class="settings-footer">
+            <small data-i18n="settingsNote">设置立即生效 · 关闭重新载入不会丢失</small>
+        </div>
+    </div>
+
+    <!-- defer: download in parallel with HTML parse, execute in order, before DOMContentLoaded.
+         Avoids render-blocking on slow networks; preserves dependency order. -->
+    <script defer src="storage.js"></script>
+    <script defer src="webappgroup.js"></script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 160">
+  <!-- pwaOS horizontal lockup — light mode (dark ink wordmark, transparent bg) -->
+  <defs>
+    <linearGradient id="pfill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4de0ef"/>
+      <stop offset="1" stop-color="#19a8c2"/>
+    </linearGradient>
+  </defs>
+
+  <g>
+    <rect x="8" y="8" width="144" height="144" rx="34" fill="#0b0d12"/>
+    <path fill="url(#pfill)" fill-rule="evenodd"
+          d="M 50 38
+             H 90
+             A 34 34 0 0 1 90 106
+             H 64
+             V 129
+             A 6 6 0 0 1 58 135
+             H 50
+             A 6 6 0 0 1 44 129
+             V 44
+             A 6 6 0 0 1 50 38
+             Z
+             M 64 52
+             H 90
+             A 20 20 0 0 1 90 92
+             H 64
+             Z"/>
+    <rect x="66" y="62" width="24" height="20" rx="3" fill="#0b0d12"/>
+    <path d="M 66 65 a 3 3 0 0 1 3 -3 h 18 a 3 3 0 0 1 3 3 v 2 h -24 Z" fill="#f5c542"/>
+    <rect x="70" y="71" width="9" height="2" rx="1" fill="#4de0ef"/>
+    <rect x="70" y="75" width="14" height="2" rx="1" fill="#2a3547"/>
+  </g>
+
+  <g fill="#16202e">
+    <!-- p: descender stem + bowl AT x-height (accent gradient) -->
+    <path fill="url(#pfill)" fill-rule="evenodd"
+          d="M 184 63
+             H 234
+             A 33 33 0 0 1 234 129
+             H 204
+             V 152
+             A 6 6 0 0 1 198 158
+             H 190
+             A 6 6 0 0 1 184 152
+             Z
+             M 204 81
+             V 111
+             H 234
+             A 15 15 0 0 0 234 81
+             Z"/>
+    <!-- w -->
+    <path d="M 252 63 h 20 l 12 44 12 -44 h 20 l 12 44 12 -44 h 20 l -20 66 h -19 l -12 -41 -12 41 h -19 Z"/>
+    <!-- a -->
+    <path fill-rule="evenodd"
+          d="M 386 63
+             H 436
+             A 8 8 0 0 1 444 71
+             V 121
+             A 8 8 0 0 1 436 129
+             H 394
+             A 24 24 0 0 1 394 81
+             H 424
+             V 81
+             A 6 6 0 0 0 418 75
+             H 386
+             Z
+             M 424 99
+             H 396
+             A 6 6 0 0 0 396 111
+             H 424
+             Z"/>
+    <!-- o -->
+    <path fill-rule="evenodd"
+          d="M 462 96
+             A 34 33 0 0 1 530 96
+             A 34 33 0 0 1 462 96
+             Z
+             M 482 96
+             A 14 15 0 0 0 510 96
+             A 14 15 0 0 0 482 96
+             Z"/>
+    <!-- s -->
+    <path d="M 546 116
+             c 0 9 8 13 20 13 c 12 0 20 -5 20 -14 c 0 -8 -6 -11 -18 -13
+             c -10 -2 -14 -3 -14 -6 c 0 -3 3 -5 9 -5 c 6 0 9 2 10 6 h 21
+             c -1 -13 -12 -20 -30 -20 c -18 0 -29 7 -29 18 c 0 9 7 13 19 15
+             c 10 2 13 3 13 6 c 0 3 -3 4 -9 4 c -7 0 -10 -2 -11 -7 Z"/>
+  </g>
+</svg>

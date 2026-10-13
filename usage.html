@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Usage | pwaOS</title>
+    <meta name="description" content="pwaOS downloads and native client app sample code — c/c++, javascript and mojo examples.">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script>
+      /* Color mode follows the OS automatically — prefers-color-scheme,
+         applied before CSS to avoid a flash of the wrong mode. */
+      (function () {
+        var mq = window.matchMedia('(prefers-color-scheme: light)');
+        function apply() {
+          document.documentElement.setAttribute('data-theme', mq.matches ? 'light' : 'dark');
+        }
+        apply();
+        if (mq.addEventListener) mq.addEventListener('change', apply);
+        else if (mq.addListener) mq.addListener(apply); /* older Safari */
+      })();
+    </script>
+    <link rel="icon" href="images/logo/favicon.svg" type="image/svg+xml">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/site.css">
+    <link rel="stylesheet" href="highlight/styles/dark.min.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container">
+        <div class="nav-row">
+          <a class="brand" href="index.html">
+            <img class="brand-logo" src="images/logo/pwaos-mark-small.svg" alt="pwaOS logo" width="30" height="30" style="background: transparent; border: 0; padding: 0;">
+            <span>pwaOS</span>
+          </a>
+          <nav class="site-nav" aria-label="Main">
+            <a href="index.html">Home</a>
+            <a href="demo.html">Demo</a>
+            <a class="active" href="usage.html" aria-current="page">Usage</a>
+            <a href="api/index.html">Docs</a>
+            <a href="about.html">About</a>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <main class="page">
+      <div class="container">
+        <p class="eyebrow">$ pwaos releases</p>
+        <h1 class="section-title">Latest releases</h1>
+
+        <h2 class="section-title" style="font-size: 18px; margin-top: 36px;">Runtime client developer SDK</h2>
+        <p class="section-sub" style="margin-bottom: 16px;">Client SDK builds — links coming with the next release.</p>
+        <div class="dl-list">
+          <a class="dl-card" href="https://github.com/daqingzd/pwaos/releases/download/v0.2.a/pwaos_sdk-linux-x64-v0.2.a.0.7z" download>
+            <div>
+              <div class="dl-name">Linux</div>
+              <div class="dl-file">.so · shared library</div>
+            </div>
+            <span class="dl-get">Download ↓</span>
+          </a>
+          <a class="dl-card" href="https://github.com/daqingzd/pwaos/releases/download/v0.2.a/pwaos_sdk-win-x86-v0.2.a.0.7z" download>
+            <div>
+              <div class="dl-name">Windows</div>
+              <div class="dl-file">.dll · dynamic library</div>
+            </div>
+            <span class="dl-get">Download ↓</span>
+          </a>
+          <div class="dl-card" title="Coming soon">
+            <div>
+              <div class="dl-name">Android</div>
+              <div class="dl-file">.aar · coming soon</div>
+            </div>
+            <span class="dl-get">Soon</span>
+          </div>
+        </div>
+
+        <hr class="divider">
+
+        <p class="eyebrow">$ pwaos examples</p>
+        <h2 class="section-title">Native client app sample code</h2>
+        <p class="section-sub">A minimal pwaOS client — create a PWA from a URL in a few lines.</p>
+
+        <div class="code-tabs" role="tablist" aria-label="Sample code language">
+          <button id="cppTab" class="active" role="tab" aria-selected="true" data-url="examples/shell_app.cc">c/c++</button>
+          <button id="jsTab" role="tab" aria-selected="false" data-url="examples/webapp.js">javascript</button>
+        </div>
+        <div class="code-panel">
+          <pre><code class="language-cpp" id="example-code">Loading…</code></pre>
+        </div>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-row">
+          <span>© 2026 pwaos team</span>
+          <span class="mono">a Progressive Web App standard-based runtime</span>
+          <div class="footer-links">
+            <a href="https://github.com/daqingzd/pwaos">GitHub</a>
+            <a href="api/index.html">API docs</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="highlight/highlight.min.js"></script>
+    <script>
+      const tabs = document.querySelectorAll('.code-tabs button');
+      const codeEl = document.getElementById('example-code');
+
+      function fetchExampleCode(url) {
+        fetch(url, { cache: 'no-store' })
+          .then(r => { if (!r.ok) throw new Error(r.status); return r.text(); })
+          .then(txt => {
+            codeEl.textContent = txt;
+            codeEl.className = codeEl.className.replace(/language-\S+/, guessLang(url));
+            if (window.hljs) hljs.highlightElement(codeEl);
+          })
+          .catch(() => { codeEl.textContent = '// sample not available: ' + url; });
+
+        tabs.forEach(t => {
+          const active = t.dataset.url === url;
+          t.classList.toggle('active', active);
+          t.setAttribute('aria-selected', active ? 'true' : 'false');
+        });
+      }
+
+      function guessLang(url) {
+        if (url.endsWith('.cc')) return 'language-cpp';
+        if (url.endsWith('.js')) return 'language-javascript';
+        return 'language-plaintext';
+      }
+
+      tabs.forEach(t => t.addEventListener('click', () => fetchExampleCode(t.dataset.url)));
+      fetchExampleCode('examples/shell_app.cc');
+    </script>
+  </body>
+</html>

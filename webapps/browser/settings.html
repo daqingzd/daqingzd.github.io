@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0f0f12">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Browser">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="PwaOS Browser">
+    <meta name="description" content="Advanced Settings">
+    <title data-i18n="advancedSettings">Advanced Settings</title>
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="i18n.js"></script>
+    <style>
+        :root {
+            --settings-max-width: 800px;
+            color-scheme: dark;
+        }
+        :root[data-theme="light"] { color-scheme: light; }
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-y: auto;
+        }
+        .settings-page {
+            max-width: var(--settings-max-width);
+            margin: 0 auto;
+            padding: 24px 16px 40px;
+        }
+        .settings-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-subtle);
+            margin-bottom: 24px;
+        }
+        .settings-header h1 {
+            font-size: 22px;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            margin: 0;
+        }
+        .settings-section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+        .settings-section-title {
+            padding: 16px 20px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-tertiary);
+            border-bottom: 1px solid var(--border-subtle);
+            background: var(--bg-tertiary);
+        }
+        .settings-row {
+            display: flex;
+            align-items: center;
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border-subtle);
+            gap: 16px;
+        }
+        .settings-row:last-child { border-bottom: none; }
+        .settings-row-info { flex: 1; min-width: 0; }
+        .settings-row-label { font-size: 15px; font-weight: 500; color: var(--text-primary); margin-bottom: 2px; }
+        .settings-row-desc { font-size: 13px; color: var(--text-secondary); }
+        .settings-row-control { flex-shrink: 0; min-width: 200px; }
+        .settings-select, .settings-input {
+            width: 100%; padding: 8px 12px; border-radius: var(--radius-md);
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-primary); color: var(--text-primary);
+            font-size: 14px; font-family: inherit;
+        }
+        .settings-select:focus, .settings-input:focus { outline: none; border-color: var(--accent-primary); }
+        .settings-select:disabled, .settings-input:disabled { opacity: 0.5; cursor: not-allowed; }
+        .settings-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+        .settings-pill {
+            padding: 6px 14px; border-radius: 20px;
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-primary); color: var(--text-secondary);
+            font-size: 13px; font-weight: 500; cursor: pointer;
+            transition: all var(--transition-base);
+        }
+        .settings-pill:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
+        .settings-pill.active { background: var(--accent-primary); border-color: var(--accent-primary); color: #fff; }
+        .settings-toggle {
+            width: 44px; height: 26px; border-radius: 13px; border: none;
+            background: var(--border-subtle); position: relative; cursor: pointer;
+            transition: background var(--transition-base);
+        }
+        .settings-toggle::after {
+            content: ''; position: absolute; top: 3px; left: 3px;
+            width: 20px; height: 20px; border-radius: 50%;
+            background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: transform var(--transition-base);
+        }
+        .settings-toggle.on { background: var(--accent-primary); }
+        .settings-toggle.on::after { transform: translateX(18px); }
+        .settings-button {
+            padding: 8px 16px; border-radius: var(--radius-md);
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-primary); color: var(--text-primary);
+            font-size: 13px; font-weight: 500; cursor: pointer;
+            transition: all var(--transition-base);
+        }
+        .settings-button:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
+        .settings-button.danger { border-color: rgba(255,122,122,0.3); color: #ff7a7a; }
+        .settings-button.danger:hover { background: rgba(255,122,122,0.1); border-color: #ff7a7a; }
+        .settings-toggle:focus-visible, .settings-pill:focus-visible, .settings-button:focus-visible {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px var(--accent-glow, rgba(255,107,53,0.25));
+        }
+        .settings-divider { height: 1px; background: var(--border-subtle); margin: 0 20px; }
+        .settings-note {
+            padding: 16px 20px; font-size: 12px; color: var(--text-tertiary);
+            background: var(--bg-tertiary); border-top: 1px solid var(--border-subtle);
+        }
+        @media (max-width: 600px) {
+            .settings-page { padding: 16px 12px 32px; }
+            .settings-row { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .settings-row-control { width: 100%; min-width: 0; }
+            .settings-pills { width: 100%; }
+            .settings-pill { flex: 1; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="settings-page">
+        <header class="settings-header">
+            <h1 data-i18n="advancedSettings">Advanced Settings</h1>
+       </header>
+
+        <!-- Search Engine Section -->
+        <section class="settings-section" id="search-section">
+            <div class="settings-section-title" data-i18n="searchEngine">Search Engine</div>
+
+            <div class="settings-row" id="search-engine-row">
+                <div class="settings-row-info">
+                    <div class="settings-row-label" data-i18n="defaultSearchEngine">Default Search Engine</div>
+                    <div class="settings-row-desc" data-i18n="searchEngineDesc">Used when searching from the address bar</div>
+                </div>
+                <div class="settings-row-control">
+                    <select class="settings-select" id="search-engine-select"></select>
+                </div>
+            </div>
+        </section>
+
+        <!-- Startup Section -->
+        <section class="settings-section" id="startup-section">
+            <div class="settings-section-title" data-i18n="startup">Startup</div>
+
+            <div class="settings-row" id="restore-session-row">
+                <div class="settings-row-info">
+                    <div class="settings-row-label" data-i18n="restoreSession">Restore Previous Session</div>
+                    <div class="settings-row-desc" data-i18n="restoreSessionDesc">Reopen tabs from your last browser session</div>
+                </div>
+                <div class="settings-row-control">
+                    <button class="settings-toggle" id="restore-session-toggle" role="switch" aria-checked="true"></button>
+                </div>
+            </div>
+
+            <div class="settings-divider"></div>
+
+            <div class="settings-row" id="homepage-row">
+                <div class="settings-row-info">
+                    <div class="settings-row-label" data-i18n="homepage">Homepage</div>
+                    <div class="settings-row-desc" data-i18n="homepageDesc">URL opened for new tabs and when no session is restored</div>
+                </div>
+                <div class="settings-row-control">
+                    <input type="text" class="settings-input" id="homepage-input" data-i18n-placeholder="homepagePlaceholder" placeholder="newtab.html">
+                </div>
+            </div>
+        </section>
+
+        <!-- User Agent Section -->
+                <section class="settings-section" id="ua-section">
+                    <div class="settings-section-title" data-i18n="userAgent">User Agent</div>
+            
+                    <div class="settings-row" id="ua-mode-row">
+                        <div class="settings-row-info">
+                            <div class="settings-row-label" data-i18n="userAgentModeLabel">User Agent Mode</div>
+                            <div class="settings-row-desc" data-i18n="userAgentModeDesc">Choose how the browser identifies itself to websites</div>
+                        </div>
+                        <div class="settings-row-control">
+                            <div class="settings-pills" id="ua-mode-pills"></div>
+                        </div>
+                    </div>
+                    <div class="settings-divider"></div>
+            
+                    <div class="settings-row" id="ua-preset-row">
+                        <div class="settings-row-info">
+                            <div class="settings-row-label" data-i18n="userAgentPresetLabel">Preset</div>
+                            <div class="settings-row-desc" data-i18n="userAgentPresetDesc">Select a predefined User-Agent string</div>
+                        </div>
+                        <div class="settings-row-control">
+                            <select class="settings-select" id="ua-preset-select"></select>
+                        </div>
+                    </div>
+                    <div class="settings-divider"></div>
+            
+                    <div class="settings-row" id="ua-custom-row">
+                        <div class="settings-row-info">
+                            <div class="settings-row-label" data-i18n="userAgentCustomLabel">Custom User Agent</div>
+                            <div class="settings-row-desc" data-i18n="userAgentCustomDesc">Enter a custom User-Agent string</div>
+                        </div>
+                        <div class="settings-row-control">
+                            <input type="text" class="settings-input" id="ua-custom-input" data-i18n-placeholder="userAgentCustomPlaceholder" placeholder="Mozilla/5.0 ...">
+                        </div>
+                    </div>
+                    <div class="settings-divider"></div>
+            
+                    <div class="settings-row" id="ua-reset-row">
+                        <div class="settings-row-info"></div>
+                        <div class="settings-row-control">
+                            <button class="settings-button" id="ua-reset-btn" data-i18n="userAgentReset">Reset to Default</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Proxy Section -->
+                <section class="settings-section" id="proxy-section">
+                    <div class="settings-section-title" data-i18n="proxySection">Proxy</div>
+            
+                    <div class="settings-row">
+                        <div class="settings-row-info">
+                            <div class="settings-row-label" data-i18n="proxyLabel">Enable Proxy</div>
+                            <div class="settings-row-desc" data-i18n="proxyDesc">Route all connections through a proxy server</div>
+                        </div>
+                        <div class="settings-row-control">
+                            <button class="settings-toggle" id="proxy-enabled-toggle" role="switch" aria-checked="false"></button>
+                        </div>
+                    </div>
+                    <div class="settings-divider"></div>
+            
+                    <div class="settings-row" id="proxy-type-row">
+                        <div class="settings-row-info">
+                            <div class="settings-row-label" data-i18n="proxyTypeLabel">Proxy Type</div>
+                        </div>
+                        <div class="settings-row-control">
+                            <select class="settings-select" id="proxy-type-select" disabled>
+                                <option value="http" data-i18n="proxyHttp">HTTP Proxy</option>
+                                <option value="https" data-i18n="proxyHttps">HTTPS Proxy</option>
+                                <option value="socks4" data-i18n="proxySocks4">SOCKS4</option>
+                                <option value="socks5" data-i18n="proxySocks5">SOCKS5</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="settings-divider"></div>
+            
+                    <div class="settings-row" id="proxy-host-row">
+                        <div class="settings-row-info">
+                            <div class="settings-row-label" data-i18n="proxyHostLabel">Host</div>
+                        </div>
+                        <div class="settings-row-control">
+                            <input type="text" class="settings-input" id="proxy-host-input" data-i18n-placeholder="proxyHostPlaceholder" placeholder="proxy.example.com" disabled>
+                        </div>
+                    </div>
+                    <div class="settings-divider"></div>
+            
+                    <div class="settings-row" id="proxy-port-row">
+                        <div class="settings-row-info">
+                            <div class="settings-row-label" data-i18n="proxyPortLabel">Port</div>
+                        </div>
+                        <div class="settings-row-control">
+                            <input type="number" class="settings-input" id="proxy-port-input" data-i18n-placeholder="proxyPortPlaceholder" placeholder="8080" min="1" max="65535" disabled>
+                        </div>
+                    </div>
+                    <div class="settings-divider"></div>
+            
+                    <div class="settings-row" id="proxy-username-row">
+                        <div class="settings-row-info">
+                            <div class="settings-row-label" data-i18n="proxyUsernameLabel">Username (optional)</div>
+                        </div>
+                        <div class="settings-row-control">
+                            <input type="text" class="settings-input" id="proxy-username-input" data-i18n-placeholder="proxyUsernamePlaceholder" placeholder="username" disabled>
+                        </div>
+                    </div>
+                    <div class="settings-divider"></div>
+            
+                    <div class="settings-row" id="proxy-password-row">
+                        <div class="settings-row-info">
+                            <div class="settings-row-label" data-i18n="proxyPasswordLabel">Password (optional)</div>
+                        </div>
+                        <div class="settings-row-control">
+                            <input type="password" class="settings-input" id="proxy-password-input" data-i18n-placeholder="proxyPasswordPlaceholder" placeholder="password" disabled>
+                        </div>
+                    </div>
+                    <div class="settings-divider"></div>
+            
+                    <div class="settings-row" id="proxy-bypass-row">
+                        <div class="settings-row-info">
+                            <div class="settings-row-label" data-i18n="proxyBypassLabel">Bypass List</div>
+                            <div class="settings-row-desc" data-i18n="proxyBypassDesc">Comma-separated hosts that bypass the proxy</div>
+                        </div>
+                        <div class="settings-row-control">
+                            <input type="text" class="settings-input" id="proxy-bypass-input" data-i18n-placeholder="proxyBypassPlaceholder" placeholder="localhost,127.0.0.1,*.local" disabled>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Footer -->
+                <div class="settings-note" data-i18n="settingsNote">Changes apply immediately. Some settings may require page reload.</div>
+            </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            window.i18n.init();
+        });
+
+        // Theme sync — mirrors newtab.html. The page must paint with the
+        // same theme as the browser chrome: read the ?theme= query param
+        // (passed by openSettingsPage), then live-sync via postMessage
+        // broadcasts and the storage event.
+        function applyTheme(value) {
+            const v = value === 'light' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', v);
+            const meta = document.querySelector('meta[name="theme-color"]');
+            if (meta) meta.setAttribute('content', v === 'light' ? '#f5f5f7' : '#0f0f12');
+        }
+        (function initFromURL() {
+            const params = new URLSearchParams(location.search);
+            const theme = params.get('theme');
+            if (theme) {
+                applyTheme(theme);
+            } else {
+                // No param — fall back to the stored browser theme.
+                try {
+                    const stored = localStorage.getItem('ffTheme');
+                    if (stored === 'light' || stored === 'dark' || stored === 'system') {
+                        applyTheme(stored);
+                    }
+                } catch (_) {}
+            }
+        })();
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'ffTheme' || e.key === 'data-theme') {
+                if (e.newValue) applyTheme(e.newValue);
+            }
+            else if (e.key === 'ui_language' && window.i18n) {
+                applyLanguage(e.newValue);
+            }
+        });
+
+        // Settings page logic - uses shared storage with main browser
+        const STORAGE_KEY = 'ffSettings';
+        const DEFAULTS = {
+            // Startup
+            restoreSession: true,           // reopen tabs from last session
+            homepage: 'newtab.html',         // URL for new tabs / when no session is restored
+            // User Agent
+            userAgentMode: 'default',
+            userAgentPreset: 'desktop-chrome',
+            userAgentCustom: '',
+            // Search Engine
+            searchEngine: 'google',
+            // Proxy
+            proxyEnabled: false,
+            proxyType: 'http',
+            proxyHost: '',
+            proxyPort: '',
+            proxyUsername: '',
+            proxyPassword: '',
+            proxyBypass: 'localhost,127.0.0.1,*.local'
+        };
+
+        // UA presets (must match script.js)
+        const UA_PRESETS = {
+            'desktop-chrome': { label: 'Desktop Chrome', ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36' },
+            'desktop-firefox': { label: 'Desktop Firefox', ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0' },
+            'desktop-safari': { label: 'Desktop Safari', ua: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2 Safari/605.1.15' },
+            'desktop-edge': { label: 'Desktop Edge', ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0' },
+            'mobile-chrome': { label: 'Mobile Chrome', ua: 'Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36' },
+            'mobile-safari': { label: 'Mobile Safari', ua: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2 Mobile/15E148 Safari/604.1' },
+            'mobile-firefox': { label: 'Mobile Firefox', ua: 'Mozilla/5.0 (Android 13; Mobile; rv:121.0) Gecko/121.0 Firefox/121.0' },
+            'tablet-chrome': { label: 'Tablet Chrome', ua: 'Mozilla/5.0 (Linux; Android 13; Pixel Tablet) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36' },
+            'bot-google': { label: 'Googlebot', ua: 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)' },
+            'bot-bing': { label: 'Bingbot', ua: 'Mozilla/5.0 (compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)' }
+        };
+
+        // Search engine presets (must match script.js SEARCH_ENGINES)
+        const SEARCH_ENGINE_LIST = [
+            { key: 'google',     name: 'Google',     icon: '🔍' },
+            { key: 'bing',       name: 'Bing',       icon: '🔍' },
+            { key: 'duckduckgo', name: 'DuckDuckGo', icon: '🦆' },
+            { key: 'baidu',      name: 'Baidu',      icon: '🌐' },
+            { key: 'yandex',     name: 'Yandex',     icon: '💠' },
+        ];
+
+        function load() {
+            try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch { return {}; }
+        }
+        function save(v) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify({...DEFAULTS, ...v})); } catch {} }
+        function get(key) { return { ...DEFAULTS, ...load() }[key]; }
+        function set(key, value) { const cur = load(); cur[key] = value; save(cur); applySettings(key, value); }
+
+        // Bridge: normalise Settings.* calls to a Promise — works whether the
+        // runtime injects a promise-returning method (pwaos.runtime
+        // createObjectWithNativeInterface) or a raw callback/sync function
+        // (addJavascriptInterface).
+        function callMethod(method, args) {
+            return new Promise((resolve, reject) => {
+                if (typeof method !== 'function') { reject(new Error('not a function')); return; }
+                let resolved = false;
+                const ok = (v) => { if (!resolved) { resolved = true; resolve(v); } };
+                const err = (e) => { if (!resolved) { resolved = true; reject(e instanceof Error ? e : new Error(String(e))); } };
+                try {
+                    const r = method.apply(null, args);
+                    if (r && typeof r.then === 'function') { r.then(ok, err); return; }
+                    ok(r);
+                } catch (e) { err(e); }
+            });
+        }
+
+        function applySettings(key, value) {
+            const v = { ...DEFAULTS, ...load() };
+            // Mirror to native ObjectInterface callbacks when available (PwaOS runtime).
+            // pwaos_ stays null when the runtime isn't injected (e.g. plain web
+            // serving) — bail out instead of throwing, so storage-only changes
+            // (toggles, inputs) still work.
+            const S = pwaos_ ? pwaos_.Settings : null;
+            if (S && key === 'searchEngine') {
+                if (typeof S.setSearchEngine === 'function') {
+                    callMethod(S.setSearchEngine, [value]).catch(e => console.warn('[settings] setSearchEngine', e.message));
+                }
+            }
+            if (S && key.startsWith('userAgent')) {
+                let ua = '';
+                if (v.userAgentMode === 'preset') ua = UA_PRESETS[v.userAgentPreset]?.ua || UA_PRESETS['desktop-chrome'].ua;
+                else if (v.userAgentMode === 'custom') ua = v.userAgentCustom;
+                if (ua && typeof S.setUserAgent === 'function') {
+                    callMethod(S.setUserAgent, [ua]).catch(e => console.warn('[settings] setUserAgent', e.message));
+                }
+            }
+            if (S && key.startsWith('proxy')) {
+                const cfg = v.proxyEnabled
+                    ? { type: v.proxyType, host: v.proxyHost, port: parseInt(v.proxyPort, 10) || 0,
+                        username: v.proxyUsername, password: v.proxyPassword, bypass: v.proxyBypass }
+                    : null;
+                if (typeof S.setProxy === 'function') {
+                    callMethod(S.setProxy, cfg ? [cfg] : [null]).catch(e => console.warn('[settings] setProxy', e.message));
+                }
+            }
+        }
+
+        // DOM elements
+        const elements = {
+            searchEngineSelect: document.getElementById('search-engine-select'),
+            // Startup
+            restoreSessionToggle: document.getElementById('restore-session-toggle'),
+            homepageInput: document.getElementById('homepage-input'),
+            // User Agent
+            uaModePills: document.getElementById('ua-mode-pills'),
+            uaPresetSelect: document.getElementById('ua-preset-select'),
+            uaCustomInput: document.getElementById('ua-custom-input'),
+            uaResetBtn: document.getElementById('ua-reset-btn'),
+            // Proxy
+            proxyEnabledToggle: document.getElementById('proxy-enabled-toggle'),
+            proxyTypeSelect: document.getElementById('proxy-type-select'),
+            proxyHostInput: document.getElementById('proxy-host-input'),
+            proxyPortInput: document.getElementById('proxy-port-input'),
+            proxyUsernameInput: document.getElementById('proxy-username-input'),
+            proxyPasswordInput: document.getElementById('proxy-password-input'),
+            proxyBypassInput: document.getElementById('proxy-bypass-input')
+        };
+
+        function render() {
+            const v = { ...DEFAULTS, ...load() };
+            // Also honour the standalone search-engine key the main browser actually reads
+            try {
+                const direct = localStorage.getItem('ffSearchEngine');
+                if (direct) v.searchEngine = direct;
+            } catch {}
+
+            // Startup
+            elements.restoreSessionToggle.classList.toggle('on', !!v.restoreSession);
+            elements.restoreSessionToggle.setAttribute('aria-checked', !!v.restoreSession);
+            elements.homepageInput.value = v.homepage || DEFAULTS.homepage;
+
+            // Search engine select
+            elements.searchEngineSelect.innerHTML = '';
+            SEARCH_ENGINE_LIST.forEach(engine => {
+                const opt = document.createElement('option');
+                opt.value = engine.key;
+                opt.textContent = engine.icon + ' ' + engine.name;
+                if (engine.key === v.searchEngine) opt.selected = true;
+                elements.searchEngineSelect.appendChild(opt);
+            });
+
+            // UA Mode pills
+            const modes = [
+                { value: 'default', labelKey: 'default' },
+                { value: 'preset', labelKey: 'userAgentPresets' },
+                { value: 'custom', labelKey: 'userAgentCustom' }
+            ];
+            elements.uaModePills.innerHTML = '';
+            modes.forEach(m => {
+                const btn = document.createElement('button');
+                btn.className = 'settings-pill' + (v.userAgentMode === m.value ? ' active' : '');
+                btn.type = 'button';
+                btn.textContent = window.i18n?.t(m.labelKey) || m.value;
+                btn.addEventListener('click', () => { set('userAgentMode', m.value); render(); });
+                elements.uaModePills.appendChild(btn);
+            });
+
+            // UA Preset select
+            elements.uaPresetSelect.innerHTML = '';
+            Object.entries(UA_PRESETS).forEach(([key, preset]) => {
+                const opt = document.createElement('option');
+                opt.value = key;
+                opt.textContent = preset.label;
+                if (key === v.userAgentPreset) opt.selected = true;
+                elements.uaPresetSelect.appendChild(opt);
+            });
+            elements.uaPresetSelect.disabled = v.userAgentMode !== 'preset';
+
+            // UA Custom input
+            elements.uaCustomInput.value = v.userAgentCustom;
+            elements.uaCustomInput.disabled = v.userAgentMode !== 'custom';
+
+            // Proxy toggle
+            elements.proxyEnabledToggle.classList.toggle('on', v.proxyEnabled);
+            elements.proxyEnabledToggle.setAttribute('aria-checked', v.proxyEnabled);
+
+            // Proxy fields
+            const proxyFields = [elements.proxyTypeSelect, elements.proxyHostInput, elements.proxyPortInput,
+                elements.proxyUsernameInput, elements.proxyPasswordInput, elements.proxyBypassInput];
+            proxyFields.forEach(el => el.disabled = !v.proxyEnabled);
+
+            elements.proxyTypeSelect.value = v.proxyType;
+            elements.proxyHostInput.value = v.proxyHost;
+            elements.proxyPortInput.value = v.proxyPort;
+            elements.proxyUsernameInput.value = v.proxyUsername;
+            elements.proxyPasswordInput.value = v.proxyPassword;
+            elements.proxyBypassInput.value = v.proxyBypass;
+        }
+
+        // ── User Agent ──────────────────────────────────────────────
+        function getUA() {
+            return new Promise((resolve) => {
+                if (typeof Settings !== 'undefined' && typeof Settings.getUserAgent === 'function') {
+                    Settings.getUserAgent().then((ua) => {
+                        console.log('getUserAgent() returned: ' + ua);
+                        resolve(ua);
+                    })
+                    .catch((err) => {
+                        console.log('getUserAgent error: ' + err);
+                        reject(err);
+                    });
+                } else {
+                    console.log('Settings.getUserAgent unavailable, using navigator');
+                    resolve(navigator.userAgent);
+                }
+            });
+        }
+
+        function setUA(ua) {
+            const val = ua || document.getElementById('uaInput').value.trim();
+            if (!val) { log('UA cannot be empty', 'err'); return; }
+            log('setUserAgent("' + val + '")...', 'info');
+            if (typeof Settings !== 'undefined' && typeof Settings.setUserAgent === 'function') {
+                Settings.setUserAgent(val).then((result) => {
+                    if (result === 'ok') {
+                        log('setUserAgent → success', 'ok');
+                        updateDisplay(val);
+                    } else {
+                        log('setUserAgent → error: ' + result, 'err');
+                    }
+                })
+                .catch((err) => {
+                    log('setUserAgent callback error: ' + err, 'err');
+                });
+            } else {
+                log('Settings.setUserAgent unavailable', 'err');
+            }
+        }
+
+        // ── Proxy ───────────────────────────────────────────────────
+        function getProxy() {
+            log('getProxy()...', 'info');
+            if (typeof Settings !== 'undefined' && typeof Settings.getProxy === 'function') {
+                Settings.getProxy().then((info) => {
+                    console.log('getProxy → ' + (info || 'null'));
+                    const el = document.getElementById('proxyDisplay');
+                    el.textContent = info ? JSON.stringify(info) : '(none)';
+                    el.classList.remove('placeholder');
+                })
+                .catch((err) => {
+                    console.log('getProxy error: ' + err);
+                    resolve();
+                });
+            } else {
+                console.log('Settings.getProxy unavailable');
+            }
+        }
+
+        function setProxy() {
+            const type = document.getElementById('proxyType').value;
+            const host = document.getElementById('proxyHost').value.trim();
+            const hostArg = host ? ', "' + host + '"' : '';
+            const call = 'setProxy("' + type + '"' + hostArg + ')';
+            log(call + '...', 'info');
+            if (typeof Settings !== 'undefined' && typeof Settings.setProxy === 'function') {
+                // Build args array: [type, hostPort?]
+                const args = [type];
+                if (host) args.push(host);
+                Settings.setProxy(...args).then((result) => {
+                    if (result === 'ok') { log(call + ' → ok', 'ok'); getProxy(); }
+                    else log(call + ' → ' + r, 'err');
+                })
+                .catch((err) => {
+                    log(call + ' error: ' + err, 'err')
+                });
+            } else {
+                log('Settings.setProxy unavailable', 'err');
+            }
+        }
+
+        // Event listeners
+        // Startup
+        elements.restoreSessionToggle.addEventListener('click', () => {
+            const next = !get('restoreSession');
+            set('restoreSession', next);
+            // Update the visual state immediately (set() only persists).
+            elements.restoreSessionToggle.classList.toggle('on', next);
+            elements.restoreSessionToggle.setAttribute('aria-checked', String(next));
+        });
+        elements.homepageInput.addEventListener('input', () => set('homepage', elements.homepageInput.value.trim() || DEFAULTS.homepage));
+        // Search engine
+        elements.searchEngineSelect.addEventListener('change', () => {
+            const v = elements.searchEngineSelect.value;
+            try { localStorage.setItem('ffSearchEngine', v); } catch {}
+            set('searchEngine', v);
+        });
+        elements.uaPresetSelect.addEventListener('change', () => set('userAgentPreset', elements.uaPresetSelect.value));
+        elements.uaCustomInput.addEventListener('input', () => set('userAgentCustom', elements.uaCustomInput.value));
+        elements.uaResetBtn.addEventListener('click', () => { set('userAgentMode', 'default'); set('userAgentPreset', 'desktop-chrome'); set('userAgentCustom', ''); render(); });
+
+        elements.proxyEnabledToggle.addEventListener('click', () => {
+            const next = !get('proxyEnabled');
+            set('proxyEnabled', next);
+            elements.proxyEnabledToggle.classList.toggle('on', next);
+            elements.proxyEnabledToggle.setAttribute('aria-checked', String(next));
+        });
+        elements.proxyTypeSelect.addEventListener('change', () => set('proxyType', elements.proxyTypeSelect.value));
+        elements.proxyHostInput.addEventListener('input', () => set('proxyHost', elements.proxyHostInput.value));
+        elements.proxyPortInput.addEventListener('input', () => set('proxyPort', elements.proxyPortInput.value));
+        elements.proxyUsernameInput.addEventListener('input', () => set('proxyUsername', elements.proxyUsernameInput.value));
+        elements.proxyPasswordInput.addEventListener('input', () => set('proxyPassword', elements.proxyPasswordInput.value));
+        elements.proxyBypassInput.addEventListener('input', () => set('proxyBypass', elements.proxyBypassInput.value));
+
+        // Keyboard navigation — ArrowUp/Down/Left/Right move between the
+        // settings controls (skipping disabled), Home/End jump to the
+        // first/last. Native controls (selects, text inputs) keep their own
+        // arrow semantics — we only navigate when focus is on a button-like
+        // control or nowhere (body). Enter/Space activate through native
+        // button click behavior.
+        document.addEventListener('keydown', (e) => {
+            if (!['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) return;
+            const t = e.target;
+            if (t.tagName === 'SELECT' || t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable) return;
+
+            // Collect fresh each time — pills are re-rendered by render().
+            const items = Array.from(document.querySelectorAll('.settings-toggle, .settings-pill, .settings-button'))
+                .filter(el => !el.disabled && !el.classList.contains('disabled') && el.offsetParent !== null);
+            if (!items.length) return;
+
+            const idx = items.indexOf(document.activeElement);
+            let target;
+            if (e.key === 'Home') target = 0;
+            else if (e.key === 'End') target = items.length - 1;
+            else if (idx === -1) target = 0; // nothing focused — start from the first control
+            else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') target = (idx + 1) % items.length;
+            else target = (idx - 1 + items.length) % items.length;
+            if (target === idx) return;
+
+            e.preventDefault();
+            items[target].focus({ preventScroll: true });
+            items[target].scrollIntoView({ block: 'nearest' });
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            render();
+            if (window.i18n) window.i18n.apply?.();
+            // Push initial values to native runtime if available
+            const v = { ...DEFAULTS, ...load() };
+            try { localStorage.setItem('ffSearchEngine', v.searchEngine); } catch {}
+            applySettings('searchEngine', v.searchEngine);
+            if (v.userAgentMode !== 'default') applySettings('userAgentMode', v.userAgentMode);
+            if (v.proxyEnabled) applySettings('proxyEnabled', true);
+        });
+
+        function applyLanguage(lang) {
+            if (window.i18n && typeof window.i18n.setLanguage === 'function') {
+                window.i18n.setLanguage(lang);
+            }
+        }
+
+        // ── Init: prefer pwaos.runtime native interface, fall back to direct pwaos_.Settings
+        let pwaos_ = null;
+        function pwaos_onLoad() {
+            pwaos_.createObjectWithNativeInterface('Settings').then(function(value) {
+                Settings = pwaos_.Settings = value;
+
+                // Push current values once the runtime object is ready
+                const v = { ...DEFAULTS, ...load() };
+                applySettings('searchEngine', v.searchEngine);
+
+                callMethod(Settings.getUserAgent).then(ua => {
+                    //applySettings('userAgentMode', ua);
+                }).catch(e => console.warn('getUserAgent', e.message));
+                callMethod(Settings.getProxy).then(info => {
+                    /*if (info != 'system')
+                        applySettings('proxyEnabled', true);*/
+                }).catch(e => console.warn('getUserAgent', e.message));
+            }).catch(err => console.warn('[settings] createObjectWithNativeInterface', err.message || err));
+        }
+
+        if (window.requestService) {
+            window.requestService('pwaos.runtime').then(success => {
+                if (success) {
+                    pwaos_ = pwaos.runtime;
+                    console.log('PwaOS version: ' + pwaos_.kVersion);
+                    pwaos_.init().then(pwaos_onLoad);
+                }
+            }).catch(err => console.log('Failed to requestService: ' + err));
+        }
+    </script>
+</body>
+</html>
